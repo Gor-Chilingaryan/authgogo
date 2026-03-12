@@ -1,12 +1,38 @@
 import React, { useState } from 'react'
 import style from './login.module.css'
 import { loginUser } from '../../api/login'
+import InputWithLabel from '../../components/InputWithLabel'
+import ValidationMessages, {
+	validationRules,
+} from '../../components/ValidationMessage'
 
 function Login() {
 	const [formData, setFormData] = useState({ email: '', password: '' })
+	const [validationStatus, setValidationStatus] = useState({
+		email: null,
+		password: null,
+	})
+
+	const handleBlur = e => {
+		const { name, value } = e.target
+		if (validationRules[name]) {
+			const isValid = validationRules[name](value)
+			setValidationStatus(prev => ({
+				...prev,
+				[name]: isValid ? 'valid' : 'invalid',
+			}))
+		}
+	}
 
 	const handleSignIn = async e => {
 		e.preventDefault()
+
+		if (
+			validationStatus.email !== 'valid' ||
+			validationStatus.password !== 'valid'
+		)
+			return
+
 		try {
 			const data = await loginUser(formData)
 
@@ -21,39 +47,49 @@ function Login() {
 		<div className={style.login_container}>
 			<div className={style.login_content}>
 				<h1 className={style.login_title}>SIGN IN</h1>
-
 				<form className={style.login_form}>
-					<div className={style.input_group}>
-						<label htmlFor='email' className={style.label}>
-							Email Address
-						</label>
-						<input
-							id='email'
-							type='email'
-							name='email'
-							className={style.input}
-							value={formData.email}
-							onChange={e =>
-								setFormData({ ...formData, email: e.target.value })
-							}
-						/>
-					</div>
+					<InputWithLabel
+						type='email'
+						groupStyle={style.input_group}
+						labelStyle={style.label}
+						labelText='Email Address'
+						inputStyle={style.input}
+						value={formData.email}
+						changeValue={e => {
+							setFormData({ ...formData, email: e.target.value })
+							setValidationStatus({
+								...validationStatus,
+								email: null,
+							})
+						}}
+						onBlur={handleBlur}
+					/>
 
-					<div className={style.input_group}>
-						<label htmlFor='password' className={style.label}>
-							Password
-						</label>
-						<input
-							id='password'
-							type='password'
-							name='password'
-							className={style.input}
-							value={formData.password}
-							onChange={e =>
-								setFormData({ ...formData, password: e.target.value })
-							}
-						/>
-					</div>
+					<InputWithLabel
+						type='password'
+						groupStyle={style.input_group}
+						labelStyle={style.label}
+						labelText='Password'
+						inputStyle={style.input}
+						value={formData.password}
+						changeValue={e => {
+							setFormData({ ...formData, password: e.target.value })
+							setValidationStatus({
+								...validationStatus,
+								password: null,
+							})
+						}}
+						onBlur={handleBlur}
+					/>
+
+					<ValidationMessages
+						status={validationStatus}
+						validationMessageStyle={style.validation_messages}
+						errorTextStyle={style.error_text}
+						emailErrorText='Please provide a valid email or password'
+						passwordErrorText='Password must be 8+ chars, include a number and symbol (!@#$)'
+					/>
+				
 
 					<a href='/forgot-password' className={style.forgot_password_link}>
 						Forgot Password?

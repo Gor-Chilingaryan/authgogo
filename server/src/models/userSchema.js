@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
   lastName: {
     type: String,
     required: [true, 'Last name is required'],
-    minLength: 2,
+    minlength: 2,
     trim: true,
   },
 
@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Password is required'],
-    minLength: [8, 'minimum password length is 8 characters'],
+    minlength: [8, 'minimum password length is 8 characters'],
     validate: {
       validator: (v) => /^(?=.*\d)(?=.*[!@#$%^&*])\S+$/.test(v),
       message: 'Password must contain at least one number, one special character (!@#$%^&*) and no spaces.'

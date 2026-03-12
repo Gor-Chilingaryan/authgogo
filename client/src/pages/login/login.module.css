@@ -81,11 +81,10 @@
 }
 
 .forgot_password_link {
-	display: flex;
-	justify-content: flex-end;
-	padding-right: 2.5rem;
+	align-self: flex-end;
+	padding: 2px 0;
+	margin-bottom: 15px;
 
-	width: 100%;
 	color: #b14ee0;
 }
 .button_group {
@@ -102,6 +101,7 @@
 
 .button {
 	width: 100%;
+
 	height: 3rem;
 
 	border-radius: 15px;
@@ -111,7 +111,7 @@
 	font-size: 1.3rem;
 	color: #fff;
 
-	transition: all ease-in-out 0.5s;
+	transition: all ease-in-out 0.3s;
 }
 
 .button:hover {
@@ -126,4 +126,20 @@
 	width: 100%;
 	color: #000;
 	text-align: center;
+	transition: all ease-in-out 0.3s;
+}
+
+.sign_up_link:hover {
+	transform: scale(1.09);
+	color: #e08d4e5d;
+}
+
+.sign_up_link:active {
+	transform: scale(0.97);
+	color: #e08d4e;
+}
+.validation_messages {
+	margin: 0.5rem;
+	color: rgb(255, 11, 11);
+	font-size: 1rem;
 }

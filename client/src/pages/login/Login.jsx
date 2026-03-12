@@ -30,9 +30,10 @@ function Login() {
 		if (
 			validationStatus.email !== 'valid' ||
 			validationStatus.password !== 'valid'
-		)
+		) {
 			return
-
+		}
+	
 		try {
 			const data = await loginUser(formData)
 
@@ -89,7 +90,6 @@ function Login() {
 						emailErrorText='Please provide a valid email or password'
 						passwordErrorText='Password must be 8+ chars, include a number and symbol (!@#$)'
 					/>
-				
 
 					<a href='/forgot-password' className={style.forgot_password_link}>
 						Forgot Password?
@@ -100,6 +100,10 @@ function Login() {
 							type='submit'
 							className={style.button}
 							onClick={handleSignIn}
+							disabled={
+								validationStatus.email !== 'valid' ||
+								validationStatus.password !== 'valid'
+							}
 						>
 							Sign in
 						</button>

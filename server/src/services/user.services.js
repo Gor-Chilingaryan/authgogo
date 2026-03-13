@@ -31,7 +31,7 @@ export const createUserService = async (userBody) => {
     password: hashedPassword
   })
 
-  
+
   const token = createToken(user._id)
 
   // returning user and token
@@ -86,4 +86,18 @@ export const loginUserService = async (userBody) => {
     },
     token
   }
+}
+
+export const forgotPasswordService = async (email) => {
+  if (!email) {
+    throw new Error("Email is required")
+  }
+
+  const user = await userModel.findOne({ email })
+
+  if (!user) {
+    throw new Error("User not found")
+  }
+
+  return user
 }

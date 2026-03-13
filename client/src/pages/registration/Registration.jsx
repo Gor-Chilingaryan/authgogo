@@ -100,7 +100,7 @@ function Registration() {
 						<button
 							type='submit'
 							className={style.registration_button}
-							disabled={isFormValid}
+							disabled={!isFormValid}
 						>
 							Sign Up
 						</button>

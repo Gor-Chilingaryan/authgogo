@@ -52,15 +52,15 @@ function Login() {
 						Password must be 8+ chars, include a number and symbol (!@#$)
 					</ValidationMessages>
 
-					<a href='/forgot-password' className={style.forgot_password_link}>
+					<Link to='/forgot-password' className={style.forgot_password_link}>
 						Forgot Password?
-					</a>
+					</Link>
 
 					<div className={style.button_group}>
 						<button
 							type='submit'
 							className={style.button}
-							disabled={isFormValid}
+							disabled={!isFormValid}
 						>
 							Sign in
 						</button>

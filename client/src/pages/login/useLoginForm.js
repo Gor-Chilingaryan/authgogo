@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { validationRules } from '../../components/ValidationMessage'
+import { validationRules } from '../../components/validation-message/ValidationMessage'
 import { loginUser } from '../../api/requests/requests'
 
 const useLoginForm = () => {
@@ -10,7 +10,7 @@ const useLoginForm = () => {
 	})
 
 	const isFormValid =
-		validationStatus.email !== 'valid' && validationStatus.password !== 'valid'
+		validationStatus.email === 'valid' && validationStatus.password === 'valid'
 
 	const handleBlur = e => {
 		const { name, value } = e.target

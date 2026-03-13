@@ -23,11 +23,11 @@ function useRegistrationForm() {
   })
 
   const isFormValid =
-    validationStatus.firstName !== 'valid' &&
-    validationStatus.lastName !== 'valid' &&
-    validationStatus.email !== 'valid' &&
-    validationStatus.password !== 'valid' &&
-    validationStatus.confirmPassword !== 'valid'
+    validationStatus.firstName === 'valid' &&
+    validationStatus.lastName === 'valid' &&
+    validationStatus.email === 'valid' &&
+    validationStatus.password === 'valid' &&
+    validationStatus.confirmPassword === 'valid'
 
 
   const handleBlur = e => {
@@ -49,15 +49,8 @@ function useRegistrationForm() {
 
   const handleRegistration = async e => {
     e.preventDefault()
-    if (
-      validationStatus.firstName !== 'valid' ||
-      validationStatus.lastName !== 'valid' ||
-      validationStatus.email !== 'valid' ||
-      validationStatus.password !== 'valid' ||
-      validationStatus.confirmPassword !== 'valid'
-    ) {
-      return
-    }
+    if (!isFormValid) return
+
     try {
       const data = await registerUser(formData)
       localStorage.setItem('token', data.token)
@@ -70,10 +63,16 @@ function useRegistrationForm() {
 
   const handleChange = e => {
     const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-    setValidationStatus({
-      ...validationStatus,
-      [name]: null,
+    setFormData(prev => ({ ...prev, [name]: value }))
+
+    setValidationStatus(prev => {
+      const newStatus = { ...prev, [name]: null }
+
+      if (name === 'password') {
+        newStatus.confirmPassword = null
+      }
+
+      return newStatus
     })
   }
 

@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import style from './login.module.css'
-import { loginUser } from '../../api/login'
+import { loginUser } from '../../api/requests'
 import InputWithLabel from '../../components/InputWithLabel'
 import ValidationMessages, {
 	validationRules,
 } from '../../components/ValidationMessage'
+import { Link } from 'react-router-dom'
 
 function Login() {
 	const [formData, setFormData] = useState({ email: '', password: '' })
@@ -33,7 +34,7 @@ function Login() {
 		) {
 			return
 		}
-	
+
 		try {
 			const data = await loginUser(formData)
 
@@ -48,9 +49,10 @@ function Login() {
 		<div className={style.login_container}>
 			<div className={style.login_content}>
 				<h1 className={style.login_title}>SIGN IN</h1>
-				<form className={style.login_form}>
+				<form className={style.login_form} onSubmit={handleSignIn}>
 					<InputWithLabel
 						type='email'
+						name="email"
 						groupStyle={style.input_group}
 						labelStyle={style.label}
 						labelText='Email Address'
@@ -68,6 +70,7 @@ function Login() {
 
 					<InputWithLabel
 						type='password'
+						name='password'
 						groupStyle={style.input_group}
 						labelStyle={style.label}
 						labelText='Password'
@@ -84,12 +87,20 @@ function Login() {
 					/>
 
 					<ValidationMessages
-						status={validationStatus}
+						status={validationStatus.email}
 						validationMessageStyle={style.validation_messages}
 						errorTextStyle={style.error_text}
-						emailErrorText='Please provide a valid email or password'
-						passwordErrorText='Password must be 8+ chars, include a number and symbol (!@#$)'
-					/>
+					>
+						Please provide a valid email address
+					</ValidationMessages>
+
+					<ValidationMessages
+						status={validationStatus.password}
+						validationMessageStyle={style.validation_messages}
+						errorTextStyle={style.error_text}
+					>
+						Password must be 8+ chars, include a number and symbol (!@#$)
+					</ValidationMessages>
 
 					<a href='/forgot-password' className={style.forgot_password_link}>
 						Forgot Password?
@@ -99,7 +110,6 @@ function Login() {
 						<button
 							type='submit'
 							className={style.button}
-							onClick={handleSignIn}
 							disabled={
 								validationStatus.email !== 'valid' ||
 								validationStatus.password !== 'valid'
@@ -108,9 +118,11 @@ function Login() {
 							Sign in
 						</button>
 
-						<a href='/sign-up' className={style.sign_up_link}>
-							Sign up
-						</a>
+						<nav>
+							<Link to='/registration' className={style.sign_up_link}>
+								Sign up
+							</Link>
+						</nav>
 					</div>
 				</form>
 			</div>

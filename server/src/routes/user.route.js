@@ -5,7 +5,7 @@ import { registerController, loginUserController } from '../controllers/user.con
 const router = express.Router()
 
 
-router.post('/register', registerController)
+router.post('/registration', registerController)
 router.post('/login', loginUserController)
 
 

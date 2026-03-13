@@ -1,5 +1,5 @@
 import React from 'react'
-
+import style from './validationMessage.module.css'
 export const validationRules = {
 	firstName: value => value.length >= 2,
 	lastName: value => value.length >= 2,
@@ -11,14 +11,13 @@ export const validationRules = {
 
 function ValidationMessages({
 	status,
-	validationMessageStyle,
-	errorTextStyle,
+	validationMessageStyle = style.validation_messages,
 	children,
 }) {
 	if (status === 'invalid') {
 		return (
 			<div className={validationMessageStyle}>
-				<p className={errorTextStyle}>{children}</p>
+				<p>{children}</p>
 			</div>
 		)
 	}

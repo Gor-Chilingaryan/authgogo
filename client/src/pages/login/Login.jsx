@@ -1,49 +1,19 @@
-import React, { useState } from 'react'
+import React from 'react'
 import style from './login.module.css'
-import { loginUser } from '../../api/requests'
-import InputWithLabel from '../../components/InputWithLabel'
-import ValidationMessages, {
-	validationRules,
-} from '../../components/ValidationMessage'
+import { useLoginForm } from './useLoginForm'
+import InputWithLabel from '../../components/input-label/InputWithLabel'
+import ValidationMessages from '../../components/validation-message/ValidationMessage'
 import { Link } from 'react-router-dom'
 
 function Login() {
-	const [formData, setFormData] = useState({ email: '', password: '' })
-	const [validationStatus, setValidationStatus] = useState({
-		email: null,
-		password: null,
-	})
-
-	const handleBlur = e => {
-		const { name, value } = e.target
-		if (validationRules[name]) {
-			const isValid = validationRules[name](value)
-			setValidationStatus(prev => ({
-				...prev,
-				[name]: isValid ? 'valid' : 'invalid',
-			}))
-		}
-	}
-
-	const handleSignIn = async e => {
-		e.preventDefault()
-
-		if (
-			validationStatus.email !== 'valid' ||
-			validationStatus.password !== 'valid'
-		) {
-			return
-		}
-
-		try {
-			const data = await loginUser(formData)
-
-			localStorage.setItem('token', data.token)
-			console.log('all right')
-		} catch (err) {
-			console.log(err.message || 'An error occurred')
-		}
-	}
+	const {
+		formData,
+		validationStatus,
+		isFormValid,
+		handleBlur,
+		handleSignIn,
+		handleChange,
+	} = useLoginForm()
 
 	return (
 		<div className={style.login_container}>
@@ -52,43 +22,24 @@ function Login() {
 				<form className={style.login_form} onSubmit={handleSignIn}>
 					<InputWithLabel
 						type='email'
-						name="email"
-						groupStyle={style.input_group}
-						labelStyle={style.label}
+						name='email'
 						labelText='Email Address'
-						inputStyle={style.input}
 						value={formData.email}
-						changeValue={e => {
-							setFormData({ ...formData, email: e.target.value })
-							setValidationStatus({
-								...validationStatus,
-								email: null,
-							})
-						}}
+						changeValue={handleChange}
 						onBlur={handleBlur}
 					/>
 
 					<InputWithLabel
 						type='password'
 						name='password'
-						groupStyle={style.input_group}
-						labelStyle={style.label}
 						labelText='Password'
-						inputStyle={style.input}
 						value={formData.password}
-						changeValue={e => {
-							setFormData({ ...formData, password: e.target.value })
-							setValidationStatus({
-								...validationStatus,
-								password: null,
-							})
-						}}
+						changeValue={handleChange}
 						onBlur={handleBlur}
 					/>
 
 					<ValidationMessages
 						status={validationStatus.email}
-						validationMessageStyle={style.validation_messages}
 						errorTextStyle={style.error_text}
 					>
 						Please provide a valid email address
@@ -96,7 +47,6 @@ function Login() {
 
 					<ValidationMessages
 						status={validationStatus.password}
-						validationMessageStyle={style.validation_messages}
 						errorTextStyle={style.error_text}
 					>
 						Password must be 8+ chars, include a number and symbol (!@#$)
@@ -110,10 +60,7 @@ function Login() {
 						<button
 							type='submit'
 							className={style.button}
-							disabled={
-								validationStatus.email !== 'valid' ||
-								validationStatus.password !== 'valid'
-							}
+							disabled={isFormValid}
 						>
 							Sign in
 						</button>

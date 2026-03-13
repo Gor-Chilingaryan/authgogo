@@ -40,45 +40,9 @@
 	padding: 0 1.5rem;
 }
 
-.input_group {
-	width: 100%;
-	padding: 0 1.5rem;
 
-	display: flex;
-	flex-direction: column;
-}
 
-.label {
-	font-weight: 600;
-	font-size: 1.2rem;
-	color: #b3b3b3;
-	text-align: left;
-}
-.input {
-	width: 100%;
-	max-width: 23rem;
-	height: 2.5rem;
 
-	padding: 0 1rem;
-	margin-bottom: 1.5rem;
-	margin-top: 0.2rem;
-
-	border-radius: 15px;
-	border: 1px solid #b3b3b3;
-	background-color: #e1e2c34a;
-
-	transition: all 0.3s ease;
-}
-
-.input_group:focus-within .label {
-	color: #b14ee0;
-}
-
-.input_group:focus-within .input {
-	border-color: #b14ee0;
-	box-shadow: 0 0 5px #b14ee0;
-	outline: none;
-}
 
 .button_group {
 	display: flex;
@@ -139,8 +103,4 @@ margin-bottom: 0.5rem;
 	color: #e08d4e;
 }
 
-.validation_messages {
-	margin: 0.5rem;
-	color: rgb(255, 11, 11);
-	font-size: 1rem;
-}
+

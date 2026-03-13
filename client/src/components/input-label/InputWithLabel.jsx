@@ -1,12 +1,13 @@
 import React from 'react'
+import style from './inputWithLabel.module.css'
 
 function InputWithLabel({
 	type,
 	name,
-	groupStyle,
-	labelStyle,
+	groupStyle = style.input_group,
+	labelStyle = style.label,
+	inputStyle = style.input,
 	labelText,
-	inputStyle,
 	value,
 	changeValue,
 	onBlur,

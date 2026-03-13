@@ -2,6 +2,7 @@ import React from 'react'
 
 function InputWithLabel({
 	type,
+	name,
 	groupStyle,
 	labelStyle,
 	labelText,
@@ -16,9 +17,9 @@ function InputWithLabel({
 				{labelText}
 			</label>
 			<input
-				id={type}
+				id={name}
 				type={type}
-				name={type}
+				name={name}
 				className={inputStyle}
 				value={value}
 				onChange={changeValue}

@@ -1,4 +1,4 @@
-.login_container {
+.registration_container {
 	min-height: 100vh;
 
 	display: flex;
@@ -6,31 +6,32 @@
 	align-items: center;
 }
 
-.login_content {
+.registration_content {
 	width: 30rem;
-	height: auto;
+	height: 100%;
 
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 
-	padding: 3rem 1.5rem;
+	padding: 0.5rem 1.5rem;
 
 	background-color: #e0d5bf99;
 	border-radius: 20px;
 }
 
-.login_title {
+.registration_title {
 	font-size: 2.5rem;
 	font-weight: 700;
 	line-height: 1.2;
 
 	width: 100%;
-	margin-bottom: 3rem;
+	margin-bottom: 2rem;
 
 	text-align: center;
 }
-.login_form {
+
+.registration_form {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -53,7 +54,6 @@
 	color: #b3b3b3;
 	text-align: left;
 }
-
 .input {
 	width: 100%;
 	max-width: 23rem;
@@ -80,13 +80,6 @@
 	outline: none;
 }
 
-.forgot_password_link {
-	align-self: flex-end;
-	padding: 2px 0;
-	margin-bottom: 15px;
-
-	color: #b14ee0;
-}
 .button_group {
 	display: flex;
 	flex-direction: column;
@@ -96,12 +89,11 @@
 	margin: 3rem 0;
 	padding: 0 1.5rem;
 
-	gap: 2rem;
+	gap: 1rem;
 }
 
-.button {
+.registration_button {
 	width: 100%;
-
 	height: 3rem;
 
 	border-radius: 15px;
@@ -114,37 +106,39 @@
 	transition: all ease-in-out 0.3s;
 }
 
-.button:disabled {
+.registration_button:disabled {
 	background-color: #b3b3b3;
 	cursor: not-allowed;
 }
 
-.button:hover {
+.registration_button:hover {
 	transform: scale(1.05);
 }
 
-.button:active {
+.registration_button:active {
 	transform: scale(0.97);
 }
 
-.sign_up_link {
+.sign_in_link {
 	display: block;
 	font-size: 1.5rem;
 	width: 100%;
 	color: #000;
 	text-align: center;
 	transition: all ease-in-out 0.1s;
+margin-bottom: 0.5rem;
 }
 
-.sign_up_link:hover {
+.sign_in_link:hover {
 	transform: scale(1.09);
 	color: #e08d4e5d;
 }
 
-.sign_up_link:active {
+.sign_in_link:active {
 	transform: scale(0.97);
 	color: #e08d4e;
 }
+
 .validation_messages {
 	margin: 0.5rem;
 	color: rgb(255, 11, 11);

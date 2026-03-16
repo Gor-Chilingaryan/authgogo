@@ -101,3 +101,33 @@ export const forgotPasswordService = async (email) => {
 
   return user
 }
+
+export const newPasswordService = async (email, password) => {
+  if (!email || !password) {
+    throw new Error("Email and password are required")
+  }
+
+  const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*\_])\S+$/
+  if (!passwordRegex.test(password) || password.length < 8) {
+    throw new Error("Password must contain at least one number, one special character (!@#$%^&*) and no spaces. and must be at least 8 characters long")
+  }
+
+  const user = await userModel.findOne({ email })
+
+  if (!user) {
+    throw new Error("User not found")
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10)
+  user.password = hashedPassword
+  await user.save()
+
+  return {
+    message: "Password updated successfully",
+    user: {
+      id: user._id,
+      email: user.email
+    },
+    token: createToken(user._id)
+  }
+}

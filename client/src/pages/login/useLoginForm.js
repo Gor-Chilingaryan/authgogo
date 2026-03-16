@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { validationRules } from '../../components/validation-message/ValidationMessage'
-import { loginUser } from '../../api/requests/requests'
+import { loginUser } from '../../api/requests'
 
 const useLoginForm = () => {
 	const [formData, setFormData] = useState({ email: '', password: '' })
@@ -8,6 +8,7 @@ const useLoginForm = () => {
 		email: null,
 		password: null,
 	})
+
 
 	const isFormValid =
 		validationStatus.email === 'valid' && validationStatus.password === 'valid'

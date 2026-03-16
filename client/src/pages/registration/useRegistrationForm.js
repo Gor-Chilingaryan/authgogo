@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { validationRules } from '../../components/validation-message/ValidationMessage'
-import { registerUser } from '../../api/requests/requests'
+import { registerUser } from '../../api/requests'
 
 function useRegistrationForm() {
   const navigate = useNavigate()

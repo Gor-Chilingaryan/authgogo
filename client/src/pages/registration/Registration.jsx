@@ -29,10 +29,7 @@ function Registration() {
 						changeValue={handleChange}
 						onBlur={handleBlur}
 					/>
-					<ValidationMessages
-						status={validationStatus.firstName}
-						errorTextStyle={style.error_text}
-					>
+					<ValidationMessages status={validationStatus.firstName}>
 						First Name is required
 					</ValidationMessages>
 
@@ -44,10 +41,7 @@ function Registration() {
 						changeValue={handleChange}
 						onBlur={handleBlur}
 					/>
-					<ValidationMessages
-						status={validationStatus.lastName}
-						errorTextStyle={style.error_text}
-					>
+					<ValidationMessages status={validationStatus.lastName}>
 						Last Name is required
 					</ValidationMessages>
 
@@ -59,10 +53,7 @@ function Registration() {
 						changeValue={handleChange}
 						onBlur={handleBlur}
 					/>
-					<ValidationMessages
-						status={validationStatus.email}
-						errorTextStyle={style.error_text}
-					>
+					<ValidationMessages status={validationStatus.email}>
 						Please provide a valid email address
 					</ValidationMessages>
 
@@ -74,10 +65,7 @@ function Registration() {
 						changeValue={handleChange}
 						onBlur={handleBlur}
 					/>
-					<ValidationMessages
-						status={validationStatus.password}
-						errorTextStyle={style.error_text}
-					>
+					<ValidationMessages status={validationStatus.password}>
 						Password must be 8+ chars, include a number and symbol (!@#$)
 					</ValidationMessages>
 
@@ -89,10 +77,7 @@ function Registration() {
 						changeValue={handleChange}
 						onBlur={handleBlur}
 					/>
-					<ValidationMessages
-						status={validationStatus.confirmPassword}
-						errorTextStyle={style.error_text}
-					>
+					<ValidationMessages status={validationStatus.confirmPassword}>
 						Passwords do not match
 					</ValidationMessages>
 
@@ -107,7 +92,7 @@ function Registration() {
 					</div>
 
 					<nav>
-						<Link to='/login' className={style.sign_in_link}>
+						<Link to='/' className={style.sign_in_link}>
 							Sign In
 						</Link>
 					</nav>

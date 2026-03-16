@@ -1,4 +1,4 @@
-import { createUserService, loginUserService, forgotPasswordService } from "../services/user.services.js"
+import { createUserService, loginUserService, forgotPasswordService, newPasswordService } from "../services/user.services.js"
 
 export const registerController = async (req, res) => {
   try {
@@ -38,6 +38,16 @@ export const loginUserController = async (req, res) => {
 export const forgotPasswordController = async (req, res) => {
   try {
     const result = await forgotPasswordService(req.body.email)
+
+    res.status(200).json(result)
+  } catch (err) {
+    return res.status(500).json({ message: err.message })
+  }
+}
+
+export const newPasswordController = async (req, res) => {
+  try {
+    const result = await newPasswordService(req.body.email, req.body.password)
 
     res.status(200).json(result)
   } catch (err) {

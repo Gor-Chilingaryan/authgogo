@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { validationRules } from '../../components/validation-message/ValidationMessage'
-import { registerUser } from '../../api/requests'
+import { registerUser } from '../../api/requests/auth'
 
 function useRegistrationForm() {
   const navigate = useNavigate()
@@ -11,7 +11,7 @@ function useRegistrationForm() {
     if (token) {
       navigate('/homepage', { replace: true })
     }
-  },[navigate])
+  }, [navigate])
 
   const [formData, setFormData] = useState({
     firstName: '',

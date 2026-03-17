@@ -5,7 +5,7 @@ import { Login } from './pages/login/Login'
 import { Registration } from './pages/registration/Registration'
 import ForgotPassword from './pages/forgot-password/ForgotPassword'
 import { NewPassword } from './pages/new-password/newPassword'
-import { HomePage } from './pages/home-page/HomePage'
+import { HomePage } from './pages/main-page/home-page/HomePage'
 
 function App() {
 	return (

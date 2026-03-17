@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
-import userRouter from './routes/user.route.js'
-
+import userRouter from './routes/auth.routes.js'
+import navigateRouter from './routes/navigate.routes.js'
 const app = express()
 
 
@@ -12,7 +12,7 @@ app.use(express.json())
 
 // routes
 app.use(userRouter)
-
+app.use(navigateRouter)
 app.get('/', (req, res) => {
   res.send('Hello World')
 })

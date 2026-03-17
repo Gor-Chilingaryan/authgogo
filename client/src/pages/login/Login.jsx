@@ -65,12 +65,13 @@ function Login() {
 						>
 							Sign in
 						</button>
-						{serverError && <div className={style.error_message_server}>{serverError}</div>}
-						
-							<Link to='/registration' className={style.sign_up_link}>
-								Sign up
-							</Link>
-						
+						{serverError && (
+							<div className={style.error_message_server}>{serverError}</div>
+						)}
+
+						<Link to='/registration' className={style.sign_up_link}>
+							Sign up
+						</Link>
 					</div>
 				</form>
 			</div>

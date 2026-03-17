@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { validationRules } from '../../components/validation-message/ValidationMessage'
-import { forgotPassword } from '../../api/requests'
+import { forgotPassword } from '../../api/requests/auth'
 import { useNavigate } from 'react-router-dom'
-
 
 function useForgotPass() {
   const [formData, setFormData] = useState({ email: '' })
@@ -16,7 +15,7 @@ function useForgotPass() {
     if (token) {
       navigate('/homepage', { replace: true })
     }
-  },[navigate])
+  }, [navigate])
 
   const isFormValid = validationStatus.email === 'valid'
 

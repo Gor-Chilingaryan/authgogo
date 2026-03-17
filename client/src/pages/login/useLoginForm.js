@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { validationRules } from '../../components/validation-message/ValidationMessage'
-import { loginUser } from '../../api/requests'
+import { loginUser } from '../../api/requests/auth'
 import { useNavigate } from 'react-router-dom'
 
 const useLoginForm = () => {
@@ -17,7 +17,7 @@ const useLoginForm = () => {
 		if (token) {
 			navigate('/homepage', { replace: true })
 		}
-	},[navigate])
+	}, [navigate])
 
 	const isFormValid =
 		validationStatus.email === 'valid' && validationStatus.password === 'valid'

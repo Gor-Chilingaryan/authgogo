@@ -36,7 +36,6 @@ function ForgotPassword() {
 
 					<ValidationMessages
 						status={validationStatus.email}
-						errorTextStyle={style.error_text}
 					>
 						Please provide a valid email address
 					</ValidationMessages>

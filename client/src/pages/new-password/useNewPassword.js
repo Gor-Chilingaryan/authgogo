@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { newPassword } from '../../api/requests'
+import { newPassword } from '../../api/requests/auth'
 import { validationRules } from '../../components/validation-message/ValidationMessage'
 
 

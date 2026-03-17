@@ -1,4 +1,4 @@
-import { createUserService, loginUserService, forgotPasswordService, newPasswordService } from "../services/user.services.js"
+import { createUserService, loginUserService, forgotPasswordService, newPasswordService } from "../services/auth.services.js"
 
 export const registerController = async (req, res) => {
   try {

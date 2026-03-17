@@ -91,7 +91,9 @@ function Registration() {
 							Sign Up
 						</button>
 					</div>
-					{serverError && <div className={style.error_message_server}>{serverError}</div>}
+					{serverError && (
+						<div className={style.error_message_server}>{serverError}</div>
+					)}
 
 					<Link to='/' className={style.sign_in_link}>
 						Sign In

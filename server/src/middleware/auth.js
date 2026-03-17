@@ -13,7 +13,7 @@ const authMiddleware = async (req, res, next) => {
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ message: 'There is no access token' })
-    } 
+    }
 
     // getting token
     const token = authHeader.replace('Bearer ', '')

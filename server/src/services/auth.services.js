@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs"
-import userModel from "../models/authSchema.js"
+import userModel from "../models/userSchema.js"
 import { createToken } from "../utils/createToken.js"
 
 export const createUserService = async (userBody) => {

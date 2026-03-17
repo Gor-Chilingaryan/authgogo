@@ -2,8 +2,9 @@ import express from 'express'
 import cors from 'cors'
 import userRouter from './routes/auth.routes.js'
 import navigateRouter from './routes/navigate.routes.js'
-const app = express()
+import userInfoRouter from './routes/userInfo.route.js'
 
+const app = express()
 
 // allows to share resources between different origins
 app.use(cors())
@@ -13,6 +14,8 @@ app.use(express.json())
 // routes
 app.use(userRouter)
 app.use(navigateRouter)
+app.use(userInfoRouter)
+
 app.get('/', (req, res) => {
   res.send('Hello World')
 })

@@ -60,14 +60,9 @@ function useNewPassword() {
 
   const handleBlur = e => {
     const { name, value } = e.target
-    let isValid = false
-
-
-    if (name === 'confirmPassword') {
-      isValid = value === formData.password && value.length > 0
-    } else if (validationRules[name]) {
-      isValid = validationRules[name](value)
-    }
+    const isValid = name === 'confirmPassword'
+      ? validationRules.confirmPassword(value, formData.password)
+      : validationRules[name]?.(value)
 
     setValidationStatus(prev => ({
       ...prev,
@@ -86,7 +81,8 @@ function useNewPassword() {
     try {
       const data = await newPassword(email, formData.password)
 
-      localStorage.setItem('token', data.token)
+      localStorage.setItem('token', data.accessToken)
+      localStorage.setItem('refreshToken', data.refreshToken)
 
       console.log(data.message)
 

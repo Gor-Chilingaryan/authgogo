@@ -32,7 +32,7 @@ export const getUserInfoService = async (userId) => {
 export const patchUserInfoService = async (userId, userBody) => {
 
   const user = await userModel.findByIdAndUpdate(userId, userBody, {
-    new: true,
+    returnDocument: 'after',
     runValidators: true,
   });
 

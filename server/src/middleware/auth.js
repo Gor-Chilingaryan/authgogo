@@ -13,7 +13,7 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ message: 'Access token missing' })
     }
 
-    const decoded = jwt.verify(token, ACCESS_SECRET);
+    const decoded = jwt.verify(token, ACCESS_SECRET)
 
     const user = await userModel.findById(decoded.userId).select('-password')
 
@@ -22,7 +22,7 @@ const authMiddleware = async (req, res, next) => {
     }
 
     req.user = user
-    next();
+    return next();
   } catch (err) {
     if (err.name === 'TokenExpiredError') {
       return res.status(401).json({ message: 'Token expired' })

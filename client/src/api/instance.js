@@ -11,8 +11,15 @@ const instance = axios.create({
 })
 
 
-instance.interceptors.request.use((config) => config
-)
+instance.interceptors.request.use((config) => {
+  // Attach the access token for protected API calls.
+  const token = localStorage.getItem('token')
+  if (token) {
+    config.headers = config.headers || {}
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
 
 instance.interceptors.response.use(
   (response) => response,
@@ -23,12 +30,23 @@ instance.interceptors.response.use(
       originalRequest._retry = true
 
       try {
-        await axios.post(`${API_URL}/refresh-token`, {}, { withCredentials: true })
+        const refreshToken = localStorage.getItem('refreshToken')
+        const res = await axios.post(`${API_URL}/refresh`, { refreshToken })
 
-        return instance(originalRequest)
+        if (res.status === 200 && res.data?.accessToken) {
+          localStorage.setItem('token', res.data.accessToken)
+          localStorage.setItem('refreshToken', res.data.refreshToken)
+
+          originalRequest.headers = originalRequest.headers || {}
+          originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`
+
+          return instance(originalRequest)
+        }
       } catch (refreshError) {
 
 
+        localStorage.removeItem('token')
+        localStorage.removeItem('refreshToken')
         localStorage.removeItem('isLogged')
 
         if (window.location.pathname !== '/') {

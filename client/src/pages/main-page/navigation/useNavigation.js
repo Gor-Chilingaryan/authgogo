@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { getAllNavigation } from '../../../api/requests/navigate'
+
 import { useNavigate } from 'react-router-dom'
+import { getAllNavigation } from '../../../api/requests/navigate'
 
 export function useNavigation() {
   const navigate = useNavigate()

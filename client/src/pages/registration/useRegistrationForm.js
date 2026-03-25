@@ -7,8 +7,8 @@ function useRegistrationForm() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const isLogged = localStorage.getItem('isLogged') === 'true'
-    if (isLogged) {
+    const token = localStorage.getItem('token')
+    if (token) {
       navigate('/homepage', { replace: true })
     }
   }, [navigate])
@@ -73,9 +73,10 @@ function useRegistrationForm() {
 
     try {
       const { confirmPassword, ...registerData } = formData
-    await registerUser(registerData)
+      const data = await registerUser(registerData)
 
-
+      localStorage.setItem('token', data.accessToken)
+      localStorage.setItem('refreshToken', data.refreshToken)
       localStorage.setItem('isLogged', 'true')
 
       navigate('/homepage')

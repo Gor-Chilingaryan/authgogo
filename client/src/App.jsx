@@ -19,7 +19,6 @@ function App() {
 					<Route path='/homepage' element={<HomePage />} />
 					<Route path='/navigation-edit' element={<NavigationEdit />} />
 				</Route>
-				
 			</Routes>
 		</BrowserRouter>
 	)

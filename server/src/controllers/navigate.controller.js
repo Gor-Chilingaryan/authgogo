@@ -2,13 +2,13 @@ import { getAllNavigationService, createNavigationService, deleteNavigationServi
 
 
 export const allNavigationController = async (req, res) => {
-  const result = await getAllNavigationService()
+  const result = await getAllNavigationService(req.user._id)
 
   res.status(result.status).json(result.json)
 }
 
 export const createNavigationController = async (req, res) => {
-  const result = await createNavigationService(req.body)
+  const result = await createNavigationService({ ...req.body, owner: req.user._id })
 
   res.status(result.status).json(result.json)
 }

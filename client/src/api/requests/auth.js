@@ -49,8 +49,9 @@ export const newPassword = async (email, password) => {
   } catch (error) {
     const backendError = error.response?.data
 
-    console.error('Update password erroe:',backendError || error)
+    console.error('Update password erroe:', backendError || error)
 
     throw new Error(backendError?.message || 'Update password failed')
   }
 }
+

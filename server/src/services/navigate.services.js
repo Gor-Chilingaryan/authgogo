@@ -70,3 +70,37 @@ export const updateNavigationService = async (userId, newOrder) => {
 
   return await navigateModel.bulkWrite(operations);
 };
+
+export const addChildNavigationService = async (parentId, childData) => {
+  try {
+    const updatedItem = await navigateModel.findByIdAndUpdate(
+      parentId,
+      { $push: { childMenu: childData } },
+      { new: true, runValidators: true }
+    )
+    if (!updatedItem) {
+      return { status: 400, json: { message: "Parent not found to add child" } }
+    }
+
+    return { status: 200, json: updatedItem }
+  } catch (err) {
+    return { status: 500, json: { message: err.message } }
+  }
+}
+
+export const deleteChildNavigationService = async (parentId, childId) => {
+  try {
+    const updatedItem = await navigateModel.findByIdAndUpdate(
+      parentId,
+      { $pull: { childMenu: { _id: childId } } },
+      { new: true }
+    )
+
+    if (!updatedItem) {
+      return { status: 404, json: { message: 'Parent item not found' } }
+    }
+    return { status: 200, json: updatedItem }
+  } catch (err) {
+    return { status: 500, json: { message: err.message } }
+  }
+}

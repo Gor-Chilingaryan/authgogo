@@ -6,11 +6,9 @@ export const loginUser = async (userData) => {
 
     return response.data
   } catch (error) {
-    const backendError = error.response?.data
-    console.error('Login error:', backendError || error)
 
 
-    throw new Error(backendError?.message || 'Login failed')
+    throw new Error('Login failed')
   }
 }
 
@@ -20,10 +18,8 @@ export const registerUser = async (userData) => {
 
     return response.data
   } catch (error) {
-    const backendError = error.response?.data
-    console.error('Registration error:', backendError || error)
 
-    throw new Error(backendError?.message || 'Registration failed')
+    throw new Error('Registration failed')
   }
 }
 
@@ -33,10 +29,7 @@ export const forgotPassword = async (email) => {
     console.log(response.data)
     return response.data
   } catch (error) {
-    const backendError = error.response?.data
-    console.error('Forgot password error:', backendError || error)
-
-    throw new Error(backendError?.message || 'Forgot password failed')
+    throw new Error('Forgot password failed')
   }
 
 }
@@ -47,11 +40,7 @@ export const newPassword = async (email, password) => {
 
     return response.data
   } catch (error) {
-    const backendError = error.response?.data
-
-    console.error('Update password erroe:', backendError || error)
-
-    throw new Error(backendError?.message || 'Update password failed')
+    throw new Error('Update password failed')
   }
 }
 

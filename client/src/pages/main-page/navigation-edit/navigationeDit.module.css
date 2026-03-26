@@ -98,18 +98,120 @@
 	width: 100%;
 }
 
-.navigationEdit_list_item_delete {
+.navigationEdit__delete_item {
 	border: none;
-	margin: 0 40px;
+	margin: 0 20px;
 
 	color: #0000007d;
 }
 
-.navigationEdit_list_item_delete:hover {
+.navigationEdit__delete_item:hover {
 	transform: scale(1.05);
 	color: #ff000040;
 }
-.navigationEdit_list_item_delete:active {
+.navigationEdit__delete_item:active {
 	transform: scale(0.97);
 	color: #ff0000;
+}
+
+.navigationEdit_list_item_plus {
+	width: 25px;
+	height: 25px;
+	border: none;
+	color: #00af00a9;
+
+	transition: all ease-in-out 0.3s;
+}
+
+.navigationEdit_list_item_plus:hover {
+	transform: scale(1.5);
+	color: #00af00;
+}
+
+.navigationEdit_list_item_plus:active {
+	transform: scale(0.97);
+	color: #00af00;
+}
+
+.navigationEdit_list_item_minus {
+	width: 25px;
+	height: 25px;
+	border: none;
+	color: #ff0000a9;
+
+	transition: all ease-in-out 0.3s;
+}
+
+.navigationEdit_list_item_minus:hover {
+	transform: scale(1.5);
+	color: #ff0000db;
+}
+.navigationEdit_list_item_minus:active {
+	transform: scale(0.97);
+	color: #ff0000;
+}
+
+.navigationEdit_list_item_children {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-items: center;
+}
+
+.navigationEdit_list_item_children_input {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	gap: 10px;
+}
+
+.navigationEdit_list_item_add_child {
+	width: 50%;
+	padding: 0.5rem;
+	margin: 10px 0;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	border: none;
+	border-radius: 15px;
+	background-color: #b14ee0;
+	color: #ffffff;
+
+	font-size: 1.2rem;
+	font-weight: 600;
+
+	transition: all ease-in-out 0.3s;
+}
+.navigationEdit_list_item_add_child:hover {
+	transform: scale(1.05);
+}
+.navigationEdit_list_item_add_child:active {
+	transform: scale(0.97);
+}
+
+.navigationEdit_child_list {
+	width: 90%;
+
+	border: 1px solid #000000c7;
+	border-radius: 15px;
+
+
+	padding: 5px;
+	margin: 5px 25px;
+
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+}
+
+.navigationEdit_child_item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 5px;
+	margin: 5px 0;
+	border-radius: 15px;
+	background-color: #f0f0f0;
 }

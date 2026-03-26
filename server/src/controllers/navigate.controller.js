@@ -1,4 +1,4 @@
-import { getAllNavigationService, createNavigationService, deleteNavigationService, updateNavigationService } from "../services/navigate.services.js"
+import { getAllNavigationService, createNavigationService, deleteNavigationService, updateNavigationService, addChildNavigationService, deleteChildNavigationService } from "../services/navigate.services.js"
 
 
 export const allNavigationController = async (req, res) => {
@@ -35,4 +35,21 @@ export const updateNaviagtionController = async (req, res) => {
     console.error(err)
     res.status(500).json({ message: err.message })
   }
+}
+
+export const addChildController = async (req, res) => {
+  const { id } = req.params
+  const { name, path } = req.body
+
+  const result = await addChildNavigationService(id, { name, path })
+  res.status(result.status).json(result.json)
+
+  res.status(result.status).json(result.json)
+}
+
+export const deleteChildController = async (req, res) => {
+  const { parentId, childId } = req.params
+  const result = await deleteChildNavigationService(parentId, childId)
+
+  res.status(result.status).json(result.json)
 }

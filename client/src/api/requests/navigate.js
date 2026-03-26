@@ -6,9 +6,8 @@ export const getAllNavigation = async () => {
 
     return response.data
   } catch (error) {
-    const backendError = error.response?.data
-    console.error('Failed to get all navigation:', backendError || error.message)
-    throw new Error(backendError?.message || 'Failed to get all navigation')
+
+    throw new Error('Failed to get all navigation')
   }
 }
 export const createNavigationItem = async (item) => {
@@ -18,20 +17,18 @@ export const createNavigationItem = async (item) => {
     return response.data
 
   } catch (error) {
-    const backendError = error.response?.data
-    console.error('Failed to create navigation item:', backendError || error.message)
-    throw new Error(backendError?.message || 'Failed to create navigation item')
+    throw new Error('Failed to create navigation item')
   }
 }
+
 export const updateNavigationItem = async (newOrder) => {
   try {
     const response = await api.patch('/update-order', { newOrder })
 
     return response.data
   } catch (error) {
-    const backendError = error.response?.data
-    console.error('Failed to update navigation item:', backendError || error.message)
-    throw new Error(backendError?.message || 'Failed to update navigation item')
+
+    throw new Error('Failed to update navigation item')
   }
 }
 
@@ -41,8 +38,29 @@ export const deleteNavigationItem = async (id) => {
 
     return response.data
   } catch (error) {
-    const backendError = error.response?.data
-    console.error('Failed to delete navigation item:', backendError || error.message)
-    throw new Error(backendError?.message || 'Failed to delete navigation item')
+
+    throw new Error('Failed to delete navigation item')
+  }
+}
+
+export const createChildNavigation = async (id, data) => {
+  try {
+    const response = await api.post(`/home-navigation/${id}/child`, data)
+
+    return response.data
+  } catch (error) {
+
+    throw new Error('Failed to add child navigation')
+  }
+}
+
+export const deleteChildNavigation = async (parentId, childId) => {
+  try {
+    const response = await api.delete(`/home-navigation/${parentId}/child/${childId}`)
+
+    return response.data
+  } catch (error) {
+
+    throw new Error('Failed to delete child navigation')
   }
 }

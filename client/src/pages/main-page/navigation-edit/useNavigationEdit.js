@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getAllNavigation, deleteNavigationItem, createNavigationItem, updateNavigationItem } from '../../../api/requests/navigate'
+import { getAllNavigation, deleteNavigationItem, createNavigationItem, updateNavigationItem, deleteChildNavigation } from '../../../api/requests/navigate'
 import {
 	KeyboardSensor,
 	PointerSensor,
@@ -61,10 +61,8 @@ function useNavigationEdit() {
 
 				await updateNavigationItem(dataToSave)
 			} catch (error) {
-				const backendError = error.response?.data
-				console.error('Failed to update navigation item:', backendError || error.message)
-				throw new Error(backendError?.message || 'Failed to update navigation item')
-				setError(error.message)
+
+				throw new Error('Failed to update navigation item')
 			}
 		}
 	}
@@ -81,14 +79,46 @@ function useNavigationEdit() {
 		}
 	}
 
+	const handleDeleteChild = async (parentId, childId) => {
+		try {
+			const response = await deleteChildNavigation(parentId, childId)
+
+			const updatedParent = response?.json || response
+			const hasUpdatedParentShape =
+				updatedParent &&
+				typeof updatedParent === 'object' &&
+				updatedParent._id === parentId &&
+				Array.isArray(updatedParent.childMenu)
+
+			if (hasUpdatedParentShape) {
+				setItems((prev) =>
+					prev.map((item) => (item._id === parentId ? updatedParent : item)),
+				)
+				return
+			}
+
+			// Fallback: backend didn't return updated parent; update client state locally.
+			setItems((prev) =>
+				prev.map((item) => {
+					if (item._id !== parentId) return item
+					const nextChildMenu = Array.isArray(item.childMenu)
+						? item.childMenu.filter((child) => child._id !== childId)
+						: item.childMenu
+					return { ...item, childMenu: nextChildMenu }
+				}),
+			)
+		} catch (error) {
+
+			throw new Error('Failed to delete child navigation')
+		}
+	}
+
 	useEffect(() => {
 		const fetchItems = async () => {
 			try {
 				setIsLoading(true)
 				const response = await getAllNavigation()
 
-				// ВАЖНО: проверяй структуру ответа от твоего API
-				// Если API возвращает { status: 200, json: [...] }, то бери response.json
 				const data = response.json || response
 
 				setItems(Array.isArray(data) ? data : [])
@@ -107,7 +137,9 @@ function useNavigationEdit() {
 		handleDeleteItem,
 		handleChange,
 		handleCreateItem,
+		handleDeleteChild,
 		sensors,
+		setItems,
 		items,
 		error,
 		isLoading,

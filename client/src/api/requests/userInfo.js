@@ -6,10 +6,9 @@ export const getUserInfoRequest = async () => {
 
     return response.data
   } catch (error) {
-    const backendError = error.response?.data
-    throw new Error(backendError?.message || 'You dont have access to this page')
-  }
 
+    throw new Error('You dont have access to this page')
+  }
 }
 
 export const patchUserInfoRequest = async (userBody) => {
@@ -18,12 +17,8 @@ export const patchUserInfoRequest = async (userBody) => {
 
     return response.data
   } catch (error) {
-    const backendError = error.response?.data
 
-    console.error('Update user info error:', backendError || error)
-
-    throw new Error(backendError?.message || 'Update user info failed')
-
+    throw new Error('Update user info failed')
   }
 }
 

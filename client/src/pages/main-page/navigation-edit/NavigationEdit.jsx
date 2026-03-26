@@ -6,7 +6,7 @@ import {
 	ArrowLeft,
 	ChevronRight,
 	BurgerIcon,
-} from '../../../components/navigation-edit/NavigationEditUi'
+} from '../../../components/navigation-edit/NavigationSort'
 import InputWithLabel from '../../../components/input-label/InputWithLabel'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
@@ -19,11 +19,13 @@ function NavigationEdit() {
 		handleDeleteItem,
 		handleChange,
 		handleCreateItem,
+		handleDeleteChild,
 		sensors,
+		setItems,
 		items,
 		error,
-		isLoading,
 		formData,
+		isLoading,
 	} = useNavigationEdit()
 
 	if (isLoading) return <span className={style.loader}></span>
@@ -64,12 +66,10 @@ function NavigationEdit() {
 
 			<div className={style.navigationEdit_list}>
 				<div className={style.navigationEdit_list_item}>
-					<BurgerIcon />
 					<span className={style.navigationEdit_list_item_name}>Home</span>
 				</div>
 
 				<div className={style.navigationEdit_list_item}>
-					<BurgerIcon />
 					<span className={style.navigationEdit_list_item_name}>Messenger</span>
 				</div>
 				<DndContext
@@ -85,7 +85,9 @@ function NavigationEdit() {
 							<SortableItem
 								key={item._id}
 								item={item}
+								setNavigationItems={setItems}
 								handleDeleteItem={() => handleDeleteItem(item._id)}
+								handleDeleteChild={handleDeleteChild}
 								BurgerIcon={BurgerIcon}
 							/>
 						))}

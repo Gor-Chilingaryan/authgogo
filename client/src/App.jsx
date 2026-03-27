@@ -7,6 +7,8 @@ import ForgotPassword from './pages/forgot-password/ForgotPassword'
 import { NewPassword } from './pages/new-password/newPassword'
 import { HomePage } from './pages/main-page/home-page/HomePage'
 import { NavigationEdit } from './pages/main-page/navigation-edit/NavigationEdit'
+import {Messenger} from './pages/messenger/Messenger'
+
 function App() {
 	return (
 		<BrowserRouter>
@@ -18,6 +20,7 @@ function App() {
 				<Route element={<ProtectedRoute />}>
 					<Route path='/homepage' element={<HomePage />} />
 					<Route path='/navigation-edit' element={<NavigationEdit />} />
+					<Route path='/messenger' element={<Messenger />} />
 				</Route>
 			</Routes>
 		</BrowserRouter>

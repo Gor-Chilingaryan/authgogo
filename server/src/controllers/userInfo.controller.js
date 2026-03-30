@@ -9,9 +9,7 @@ export const getUserInfoController = async (req, res) => {
 
 export const patchUserInfoController = async (req, res) => {
   try {
-
     const updatedUser = await patchUserInfoService(req.user._id, req.body);
-
 
     return res.status(200).json(updatedUser);
   } catch (err) {

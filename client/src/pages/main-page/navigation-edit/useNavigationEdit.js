@@ -54,9 +54,8 @@ function useNavigationEdit() {
 
 			setItems(reorderedItems)
 			try {
-				const dataToSave = reorderedItems.map((item, index) => ({
+				const dataToSave = reorderedItems.map((item) => ({
 					_id: item._id,
-					index: index + 1
 				}))
 
 				await updateNavigationItem(dataToSave)

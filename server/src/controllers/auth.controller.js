@@ -1,13 +1,11 @@
 import { createUserService, loginUserService, forgotPasswordService, newPasswordService, refreshServices } from "../services/auth.services.js"
 
-
-
 const isProd = process.env.NODE_ENV === 'production'
 
 const cookieOptions = {
   httpOnly: true,
   secure: isProd,
-  sameSite: 'strict',
+  sameSite: 'lax',
   path: '/',
 }
 

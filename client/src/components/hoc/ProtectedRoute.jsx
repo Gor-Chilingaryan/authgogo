@@ -1,12 +1,21 @@
-import React from 'react'
-import { Navigate, Outlet,useLocation } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { checkAuth } from '../../api/requests/auth'
 
 function ProtectedRoute() {
-	const isLogged = localStorage.getItem('isLogged') === 'true'
+	const [status, setStatus] = useState('checking')
 
-	if (!isLogged) {
-		return <Navigate to='/' replace />
-	}
+	useEffect(() => {
+		checkAuth()
+			.then(() => setStatus('auth'))
+			.catch(() => {
+				localStorage.removeItem('isLogged')
+				setStatus('unauth')
+			})
+	}, [])
+
+	if (status === 'checking') return <span className='loader' />
+	if (status === 'unauth') return <Navigate to='/' replace />
 
 	return <Outlet />
 }

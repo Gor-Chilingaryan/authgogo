@@ -12,6 +12,11 @@ export const loginUser = async (userData) => {
   }
 }
 
+export const checkAuth = async () => {
+  const response = await api.get('/user-info')
+  return response.data
+}
+
 export const registerUser = async (userData) => {
   try {
     const response = await api.post('/registration', userData)

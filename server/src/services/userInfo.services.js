@@ -13,7 +13,7 @@ export const getUserInfoService = async (userId) => {
 
     const userData = user.toObject()
 
-   
+
 
     return {
       status: 200,
@@ -38,8 +38,5 @@ export const patchUserInfoService = async (userId, userBody) => {
     throw new Error('UserNotFound');
   }
 
-  return {
-    status: 200,
-    json: user
-  }
+  return user
 };

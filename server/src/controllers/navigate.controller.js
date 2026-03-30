@@ -43,8 +43,6 @@ export const addChildController = async (req, res) => {
 
   const result = await addChildNavigationService(id, { name, path })
   res.status(result.status).json(result.json)
-
-  res.status(result.status).json(result.json)
 }
 
 export const deleteChildController = async (req, res) => {

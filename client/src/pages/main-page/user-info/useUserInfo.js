@@ -50,7 +50,7 @@ export const useUserInfo = () => {
     try {
       setIsLoading(true)
       const data = await patchUserInfoRequest(userInfo)
-      setUserInfo(data.json)
+      setUserInfo(data)
       setDisableInput(true)
     } catch (error) {
       setError(error.message)

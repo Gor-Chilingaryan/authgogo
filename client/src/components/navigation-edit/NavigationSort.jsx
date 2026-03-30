@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import style from '../../pages/main-page/navigation-edit/NavigationEdit.module.css'
+import style from '../../pages/main-page/navigation-edit/navigationEdit.module.css'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import InputWithLabel from '../input-label/InputWithLabel'

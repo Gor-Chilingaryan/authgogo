@@ -1,6 +1,7 @@
 import React from 'react'
 import style from './userInfo.module.css'
 import { useUserInfo } from './useUserInfo'
+import { Navigation } from '../navigation/Navigation'
 import InputWithLabel from '../../../components/input-label/InputWithLabel'
 import { Link } from 'react-router-dom'
 import cameraPlusIcon from '../../../assets/icons/camera-plus.svg'
@@ -58,70 +59,75 @@ function UserInfo() {
 	]
 
 	return (
-		<div className={style.userInfo_container}>
+		<>
 			<div>
-				<img
-					src={userInfo.avatar || '/user-images/default_user.png'}
-					alt={'User Avatar'}
-					className={style.userInfo_avatar}
-				/>
-				{!disableInput && (
+				<Navigation />
+			</div>
+			<div className={style.userInfo_container}>
+				<div>
 					<img
-						onClick={() => setIsModalOpen(true)}
-						src={cameraPlusIcon}
-						className={style.addAvatarIcon}
-						alt='add avatar icon'
+						src={userInfo.avatar || '/user-images/default_user.png'}
+						alt={'User Avatar'}
+						className={style.userInfo_avatar}
+					/>
+					{!disableInput && (
+						<img
+							onClick={() => setIsModalOpen(true)}
+							src={cameraPlusIcon}
+							className={style.addAvatarIcon}
+							alt='add avatar icon'
+						/>
+					)}
+				</div>
+				{isModalOpen && (
+					<UserAvatarModal
+						isOpen={isModalOpen}
+						onClose={() => setIsModalOpen(false)}
+						onSelectAvatar={url => handleAvatarChange(url)}
 					/>
 				)}
-			</div>
-			{isModalOpen && (
-				<UserAvatarModal
-					isOpen={isModalOpen}
-					onClose={() => setIsModalOpen(false)}
-					onSelectAvatar={url => handleAvatarChange(url)}
-				/>
-			)}
 
-			<div className={style.userInformation}>
-				{userInfoData.map(field => {
-					return (
-						<InputWithLabel
-							key={field.id}
-							id={field.id}
-							type={field.type}
-							name={field.name}
-							groupStyle={style.input_group}
-							labelStyle={style.label}
-							inputStyle={style.input}
-							labelText={field.label}
-							value={field.value || ''}
-							changeValue={handleChange}
-							disabled={disableInput}
-							placeholder={field.placeholder || ''}
-						/>
-					)
-				})}
-			</div>
-
-			{disableInput ? (
-				<button className={style.editButton} onClick={handleDesableInput}>
-					Edit
-				</button>
-			) : (
-				<div className={style.button_group}>
-					<button className={style.cancelButton} onClick={handleDesableInput}>
-						Cancel
-					</button>
-					<button className={style.saveButton} onClick={handleSaveValues}>
-						Save
-					</button>
+				<div className={style.userInformation}>
+					{userInfoData.map(field => {
+						return (
+							<InputWithLabel
+								key={field.id}
+								id={field.id}
+								type={field.type}
+								name={field.name}
+								groupStyle={style.input_group}
+								labelStyle={style.label}
+								inputStyle={style.input}
+								labelText={field.label}
+								value={field.value || ''}
+								changeValue={handleChange}
+								disabled={disableInput}
+								placeholder={field.placeholder || ''}
+							/>
+						)
+					})}
 				</div>
-			)}
 
-			<Link to='/' onClick={handleLogout} className={style.logoutButton}>
-				LOG OUT
-			</Link>
-		</div>
+				{disableInput ? (
+					<button className={style.editButton} onClick={handleDesableInput}>
+						Edit
+					</button>
+				) : (
+					<div className={style.button_group}>
+						<button className={style.cancelButton} onClick={handleDesableInput}>
+							Cancel
+						</button>
+						<button className={style.saveButton} onClick={handleSaveValues}>
+							Save
+						</button>
+					</div>
+				)}
+
+				<Link to='/' onClick={handleLogout} className={style.logoutButton}>
+					LOG OUT
+				</Link>
+			</div>
+		</>
 	)
 }
 

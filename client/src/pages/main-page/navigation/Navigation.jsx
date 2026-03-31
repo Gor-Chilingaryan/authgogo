@@ -27,12 +27,10 @@ function Navigation() {
 
 				{Array.isArray(navItems) &&
 					navItems.map(item => {
-						// Исправлено: length
 						const hasChildren = item.childMenu && item.childMenu.length > 0
 
 						return (
 							<div key={item._id} className={style.navItem}>
-								{/* Обертка для корректного hover */}
 								<div className={style.navItemWrapper}>
 									<Link to={item.path} className={style.navItemLink}>
 										{item.name}
@@ -41,7 +39,6 @@ function Navigation() {
 
 									{hasChildren && (
 										<div className={style.dropDown}>
-											{/* Исправлено: map */}
 											{item.childMenu.map(child => (
 												<Link
 													to={child.path}

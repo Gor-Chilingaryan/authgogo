@@ -59,20 +59,16 @@ navigateSchema.index({ owner: 1, name: 1 }, { unique: true });
  * @returns {Promise<void>}
  * @throws {Error} Propagates query errors from `findOne` (e.g. DB unavailable).
  */
-navigateSchema.pre('save', async function (next) {
+navigateSchema.pre('save', async function () {
   if (this.isNew) {
-    try {
-      const lastItem = await this.constructor
-        .findOne({ owner: this.owner })
-        .sort({ index: -1 })
 
-      this.index = lastItem && lastItem.index ? lastItem.index + 1 : 1
+    const lastItem = await this.constructor
+      .findOne({ owner: this.owner })
+      .sort({ index: -1 })
 
-    } catch (err) {
-      return next(err)
-    }
+    this.index = lastItem && lastItem.index ? lastItem.index + 1 : 1
+
   }
-  next()
 })
 
 

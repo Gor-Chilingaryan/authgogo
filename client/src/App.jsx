@@ -4,14 +4,14 @@
  */
 import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { ProtectedRoute } from './components/hoc/ProtectedRoute'
-import { Login } from './pages/login/Login'
-import { Registration } from './pages/registration/Registration'
-import ForgotPassword from './pages/forgot-password/ForgotPassword'
-import { NewPassword } from './pages/new-password/newPassword'
-import { HomePage } from './pages/main-page/home-page/HomePage'
-import { NavigationEdit } from './pages/main-page/navigation-edit/NavigationEdit'
-import { Messenger } from './pages/messenger/Messenger'
+import { ProtectedRoute } from './components/hoc/index.jsx'
+import { Login } from './pages/login/index.jsx'
+import { Registration } from './pages/registration/index.jsx'
+import ForgotPassword from './pages/forgot-password/index.jsx'
+import { NewPassword } from './pages/new-password/index.jsx'
+import { HomePage } from './pages/main-page/home-page/index.jsx'
+import { NavigationEdit } from './pages/main-page/navigation-edit/index.jsx'
+import { Messenger } from './pages/messenger/index.jsx'
 /**
  * Configures top-level browser router and route tree.
  * @returns {JSX.Element} Application routing structure.

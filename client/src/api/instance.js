@@ -29,7 +29,7 @@ instance.interceptors.response.use(
 
       try {
         await instance.post('/refresh')
-        
+
         return instance(originalRequest)
       } catch (refreshError) {
         localStorage.removeItem('isLogged')

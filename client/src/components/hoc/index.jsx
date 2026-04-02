@@ -3,7 +3,7 @@
  * Allows access only when local auth flag exists; otherwise redirects to login.
  */
 import React from 'react'
-import { Navigate, Outlet,useLocation } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom'
 
 /**
  * Renders protected route outlet or redirect.

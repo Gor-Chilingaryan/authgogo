@@ -38,7 +38,7 @@ const useLoginForm = () => {
 	 * @returns {boolean} True when form data is valid.
 	 */
 	const validateForm = () => {
-		const emailValid = validationRules.email(formData.email) ? "valid" : 'invalid'
+		const emailValid = validationRules.email(formData.email) ? 'valid' : 'invalid'
 		const passwordValid = validationRules.password(formData.password) ? 'valid' : 'invalid'
 
 		setValidationStatus({

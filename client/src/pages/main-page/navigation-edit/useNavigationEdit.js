@@ -47,14 +47,24 @@ function useNavigationEdit() {
 	 * Creates a new navigation item from form data.
 	 * @returns {Promise<void>}
 	 */
+
+	const generatePath = (path) => {
+		return '/' + path
+			.toLowerCase()
+			.trim()
+			.split(' ')
+			.join('_')
+	}
+
 	const handleCreateItem = async () => {
 		if (!formData.name.trim() || !formData.path.trim()) return
 
 		try {
-			const response = await createNavigationItem(formData)
+			const response = await createNavigationItem({ ...formData, path: generatePath(formData.path) })
 
 			const newItem = response.json || response
 			setItems((prev => [...prev, newItem]))
+
 			setFormData({ name: "", path: '' })
 		} catch (error) {
 			setError(error.message)

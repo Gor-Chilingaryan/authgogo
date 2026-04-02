@@ -35,7 +35,7 @@ const authMiddleware = async (req, res, next) => {
     }
 
     req.user = user
-     next();
+    next();
   } catch (err) {
     // TokenExpiredError / JsonWebTokenError: client must refresh or re-login — 401 Unauthorized (not authenticated).
     if (err.name === 'TokenExpiredError') {

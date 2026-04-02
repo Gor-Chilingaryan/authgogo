@@ -71,7 +71,6 @@ navigateSchema.pre('save', async function () {
   }
 })
 
-
 const navigateModel = mongoose.model('Navigate', navigateSchema)
 
 export default navigateModel

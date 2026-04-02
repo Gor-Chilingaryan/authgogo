@@ -12,6 +12,7 @@ import 'dotenv/config'
  * @throws {Error} Not thrown explicitly — connection failures are caught and logged only.
  */
 export default async () => {
+  console.log("--------------------------------", process.env.MONGODB_URI)
   try {
     await mongoose.connect(process.env.MONGODB_URI)
     console.log('Connected to MongoDB 🚀🚀🚀')

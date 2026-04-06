@@ -182,7 +182,6 @@ function useNavigationEdit() {
 		handleCreateItem,
 		handleDeleteChild,
 		sensors,
-		setItems,
 		items,
 		error,
 		isLoading,

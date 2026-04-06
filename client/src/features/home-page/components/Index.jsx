@@ -9,7 +9,7 @@ import style from './userInfo.module.css';
 import { useUserInfo } from '@features/home-page/hook/useUserInfo';
 import InputWithLabel from '@components/input-label/InputWithLabel';
 import cameraPlusIcon from '@assets/icons/camera-plus.svg';
-import UserAvatarModal from '@components/user-avatar-modal/userAvatarModal';
+import {UserAvatarModal} from '@components/user-avatar-modal/userAvatarModal';
 
 /**
  * Renders authenticated user profile form and controls.
@@ -68,20 +68,18 @@ function UserInfo() {
 
   return (
     <div className={style.userInfo_container}>
-      <div>
+      <div className={style.userInfo_avatar_wrapper}>
         <img
           src={userInfo.avatar || '/user-images/default_user.png'}
           alt={'User Avatar'}
           className={style.userInfo_avatar}
         />
-        {!disableInput && (
-          <img
-            onClick={() => setIsModalOpen(true)}
-            src={cameraPlusIcon}
-            className={style.addAvatarIcon}
-            alt='add avatar icon'
-          />
-        )}
+        <img
+          onClick={() => setIsModalOpen(true)}
+          src={cameraPlusIcon}
+          className={style.addAvatarIcon}
+          alt='add avatar icon'
+        />
       </div>
       {isModalOpen && (
         <UserAvatarModal

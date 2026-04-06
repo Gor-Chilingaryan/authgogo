@@ -3,9 +3,10 @@
  * Renders conversation list, active chat panel, and message composer UI.
  */
 import React from 'react';
-import { useMessenger } from '@features/conversations/hook/useMessenger';
-import { Navigation } from '@/features/navigation/components/navigation/Navigation';
 import style from './messenger.module.css';
+import { useMessenger } from '@features/conversations/hook/useMessenger';
+import { Avatar } from '@components/user-avatar-modal/UserAvatarModal';
+import loupeIcon from '@assets/icons/loupe.svg';
 
 /**
  * Displays the full messenger interface using `useMessenger`.
@@ -28,17 +29,20 @@ function Messenger() {
     error,
     messagesEndRef,
     openConversation,
-    closeConversation,
+    formatTime,
     handleSend,
     handleKeyDown,
   } = useMessenger();
 
+  const closeChat = () => openConversation(null);
+
   return (
     <div className={style.page}>
-
       <main className={style.main}>
         {/* ── Left sidebar ── */}
-        <aside className={style.sidebar}>
+        <aside
+          className={`${style.sidebar} ${activePartner ? style.hiddenOnMobile : ''}`}
+        >
           <div className={style.sidebarHeader}>
             <h2 className={style.sidebarTitle}>Messages</h2>
           </div>
@@ -48,10 +52,13 @@ function Messenger() {
             <input
               type='text'
               className={style.searchInput}
-              placeholder='Search people...'
+              placeholder='Search '
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+            <button className={style.searchUserInfo}>
+              <img src={loupeIcon} alt='loupe' />
+            </button>
           </div>
 
           {/* Search results */}
@@ -79,7 +86,6 @@ function Messenger() {
           {/* Conversation list */}
           <div className={style.conversationList}>
             {isLoadingConversations && <span className={style.loader} />}
-
             {!isLoadingConversations && conversations.length === 0 && (
               <p className={style.emptyHint}>
                 No conversations yet. Search for someone above!
@@ -117,19 +123,15 @@ function Messenger() {
                     </span>
                   )}
                 </div>
-
-                {lastMessage && (
-                  <span className={style.conversationTime}>
-                    {formatTime(lastMessage.createdAt)}
-                  </span>
-                )}
               </button>
             ))}
           </div>
         </aside>
 
         {/* ── Chat panel ── */}
-        <section className={style.chatPanel}>
+        <section
+          className={`${style.chatPanel} ${!activePartner ? style.hiddenOnMobile : ''}`}
+        >
           {!activePartner ? (
             <div className={style.emptyChat}>
               <div className={style.emptyChatIcon}>💬</div>
@@ -141,19 +143,13 @@ function Messenger() {
             <>
               {/* Chat header */}
               <div className={style.chatHeader}>
-                <button
-                  className={style.backButton}
-                  onClick={closeConversation}
-                >
+                <button className={style.backButton} onClick={closeChat}>
                   ←
                 </button>
                 <Avatar user={activePartner} size={40} />
                 <div className={style.chatHeaderInfo}>
                   <span className={style.chatHeaderName}>
                     {activePartner.firstName} {activePartner.lastName}
-                  </span>
-                  <span className={style.chatHeaderEmail}>
-                    {activePartner.email}
                   </span>
                 </div>
               </div>
@@ -190,7 +186,6 @@ function Messenger() {
                   );
                 })}
 
-                {/* Invisible element at the bottom for auto-scroll */}
                 <div ref={messagesEndRef} />
               </div>
 
@@ -199,21 +194,28 @@ function Messenger() {
 
               {/* Input area */}
               <div className={style.inputArea}>
-                <textarea
-                  className={style.messageInput}
-                  placeholder='Type a message… (Enter to send, Shift+Enter for new line)'
-                  value={messageInput}
-                  onChange={(e) => setMessageInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  rows={1}
-                  disabled={isSending}
-                />
-                <button
-                  className={style.sendButton}
-                  onClick={handleSend}
-                  disabled={!messageInput.trim() || isSending}
-                >
-                  {isSending ? '…' : '↑'}
+                <div className={style.inputWrapper}>
+                  <textarea
+                    className={style.messageInput}
+                    placeholder='Type a message…'
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    rows={1}
+                    disabled={isSending}
+                  />
+                  <button
+                    className={style.sendButton}
+                    onClick={handleSend}
+                    disabled={!messageInput.trim() || isSending}
+                  >
+                    SEND
+                  </button>
+                </div>
+              </div>
+              <div>
+                <button className={style.addUserInfo}>
+                  Share my account details
                 </button>
               </div>
             </>
@@ -222,53 +224,6 @@ function Messenger() {
       </main>
     </div>
   );
-}
-
-// ── Small reusable avatar component ──────────────────────────────────────────
-
-/**
- * Renders a circular user avatar image.
- * @param {{user: object, size: number}} props - Avatar props.
- * @returns {JSX.Element} Avatar image.
- */
-function Avatar({ user, size }) {
-  return (
-    <img
-      src={user.avatar || '/user-images/default_user.png'}
-      alt={`${user.firstName} ${user.lastName}`}
-      style={{
-        width: size,
-        height: size,
-        borderRadius: '50%',
-        objectFit: 'cover',
-        flexShrink: 0,
-      }}
-    />
-  );
-}
-
-// ── Format timestamp ──────────────────────────────────────────────────────────
-
-/**
- * Formats message timestamps for chat list and bubbles.
- * @param {string|Date} dateStr - Message creation timestamp.
- * @returns {string} Human-readable time or relative day.
- */
-function formatTime(dateStr) {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const isToday = date.toDateString() === now.toDateString();
-
-  if (isToday) {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
-
-  const diffDays = Math.floor((now - date) / 86400000);
-  if (diffDays === 1) return 'Yesterday';
-  if (diffDays < 7) {
-    return date.toLocaleDateString([], { weekday: 'short' });
-  }
-  return date.toLocaleDateString([], { day: 'numeric', month: 'short' });
 }
 
 export { Messenger };

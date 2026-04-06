@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Navigation } from '@/features/navigation/components/navigation/Navigation';
+import { Navigation } from '@/features/navigation/components/navigation';
 
 function Main() {
   return (

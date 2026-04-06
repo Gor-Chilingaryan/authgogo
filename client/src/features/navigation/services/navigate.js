@@ -42,16 +42,6 @@ export const deleteNavigationItem = async (id) => {
   }
 }
 
-export const createChildNavigation = async (id, data) => {
-  try {
-    const response = await api.post(`/home-navigation/${id}/child`, data)
-
-    return response.data
-  } catch (error) {
-
-    throw new Error('Failed to add child navigation')
-  }
-}
 
 export const deleteChildNavigation = async (parentId, childId) => {
   try {

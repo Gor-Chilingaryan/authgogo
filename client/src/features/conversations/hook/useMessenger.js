@@ -31,7 +31,6 @@ const POLL_INTERVAL = import.meta.env.VITE_POLL_INTERVAL // poll for new message
  * error: string|null,
  * messagesEndRef: import('react').MutableRefObject<HTMLElement|null>,
  * openConversation: Function,
- * closeConversation: Function,
  * handleSend: Function,
  * handleKeyDown: Function
  * }} Hook API for messenger UI.
@@ -273,18 +272,30 @@ export function useMessenger() {
     return () => clearTimeout(timer)
   }, [searchQuery])
 
-  // ─── Close active conversation ────────────────────────────────────────────
+  // ── Format timestamp ──────────────────────────────────────────────────────────
 
   /**
-   * Closes active conversation and resets chat pane state.
-   * @returns {void}
+   * Formats message timestamps for chat list and bubbles.
+   * @param {string|Date} dateStr - Message creation timestamp.
+   * @returns {string} Human-readable time or relative day.
    */
-  const closeConversation = useCallback(() => {
-    stopPolling()
-    setActivePartner(null)
-    setMessages([])
-    setError(null)
-  }, [stopPolling])
+  function formatTime(dateStr) {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+
+    if (isToday) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    const diffDays = Math.floor((now - date) / 86400000);
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) {
+      return date.toLocaleDateString([], { weekday: 'short' });
+    }
+    return date.toLocaleDateString([], { day: 'numeric', month: 'short' });
+  }
+
 
   return {
     conversations,
@@ -302,8 +313,9 @@ export function useMessenger() {
     error,
     messagesEndRef,
     openConversation,
-    closeConversation,
+    formatTime,
     handleSend,
     handleKeyDown,
+
   }
 }

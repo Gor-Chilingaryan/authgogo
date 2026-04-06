@@ -54,7 +54,6 @@ body {
   font-family: 'Nunito', sans-serif;
   background-color: #efefef;
   color: #333333;
-  overflow: hidden;
 }
 
 /* 8. To make the footer always at the bottom, if you are using Flex on #root */

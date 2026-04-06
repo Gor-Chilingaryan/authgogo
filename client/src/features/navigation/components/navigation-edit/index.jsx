@@ -17,7 +17,7 @@ import { SortableItem } from '@components/navigation-edit/NavigationSort';
 import InputWithLabel from '@components/input-label/InputWithLabel';
 
 import arrowLeft from '@assets/icons/arrow-left.svg';
-import burgerIcon from '@assets/icons/burger.svg';
+import burgerIcon from '@assets/icons/burger.svg?url';
 import chevronRight from '@assets/icons/chevron-right.svg';
 /**
  * Renders drag-and-drop navigation management UI.
@@ -32,7 +32,7 @@ function NavigationEdit() {
     handleCreateItem,
     handleDeleteChild,
     sensors,
-    setItems,
+
     items,
     error,
     formData,
@@ -51,8 +51,9 @@ function NavigationEdit() {
         >
           <img src={arrowLeft} alt='Arrow-Left' /> Back
         </button>
-        <div>
+        <div className={style.navigationEdit_creating_input_container}>
           <InputWithLabel
+            inputStyle={style.navigationEdit_creating_input}
             type='text'
             name='name'
             labelText='Name'
@@ -60,6 +61,7 @@ function NavigationEdit() {
             value={formData?.name}
           />
           <InputWithLabel
+            inputStyle={style.navigationEdit_creating_input}
             type='text'
             name='path'
             labelText='path'
@@ -71,7 +73,12 @@ function NavigationEdit() {
           className={style.navigationEdit_creating_add_button}
           onClick={handleCreateItem}
         >
-          Add <img src={chevronRight} alt='Chevron-Right' />
+          Add{' '}
+          <img
+            className={style.chevron}
+            src={chevronRight}
+            alt='Chevron-Right'
+          />
         </button>
       </div>
 
@@ -96,7 +103,6 @@ function NavigationEdit() {
               <SortableItem
                 key={item._id}
                 item={item}
-                setNavigationItems={setItems}
                 handleDeleteItem={() => handleDeleteItem(item._id)}
                 handleDeleteChild={handleDeleteChild}
                 burgerIcon={burgerIcon}

@@ -1,10 +1,15 @@
-/* ── Page layout ────────────────────────────────────────────────────── */
+/* ── Page layout (Mobile First) ──────────────────────────────────────── */
 
 .page {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 90dvh;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
   overflow: hidden;
+  background-color: #fff;
 }
 
 .header {
@@ -18,15 +23,28 @@
   overflow: hidden;
 }
 
-/* ── Left sidebar ────────────────────────────────────────────────────── */
+/* ── Base Sidebar & Chat Panel (Mobile First) ────────────────────────── */
 
 .sidebar {
-  width: 320px;
+  width: 100%; 
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #e5e5e5;
+  border-right: none;
   overflow: hidden;
+}
+
+.chatPanel {
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+
+.hiddenOnMobile {
+  display: none !important;
 }
 
 .sidebarHeader {
@@ -42,23 +60,31 @@
 /* ── Search ──────────────────────────────────────────────────────────── */
 
 .searchWrapper {
-  padding: 0 1rem 0.75rem;
+  padding: 0 1rem;
+  margin: 1rem 1.5rem; 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ddd;
+  border-radius: 20px;
 }
 
 .searchInput {
   width: 100%;
   padding: 0.6rem 1rem;
-  border: 1px solid #ddd;
+  border: none;
   border-radius: 20px;
   font-size: 0.9rem;
-  background-color: #f5f5f5;
-  transition: border-color 0.2s, background-color 0.2s;
+  background-color: transparent;
   outline: none;
 }
 
-.searchInput:focus {
-  border-color: #a21ce0;
-  background-color: #fff;
+.searchUserInfo {
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
 }
 
 .searchResults {
@@ -105,6 +131,7 @@
 }
 
 .conversationItem {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -127,25 +154,26 @@
 }
 
 .avatarWrapper {
-  position: relative;
   flex-shrink: 0;
+  position: relative;
 }
 
 .badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  min-width: 18px;
-  height: 18px;
+  bottom: 0px;
+  right: -5px;
+  min-width: 20px;
+  height: 20px;
   padding: 0 4px;
   background-color: #a21ce0;
   color: #fff;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  border-radius: 9px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 2px solid #fff; 
 }
 
 .conversationMeta {
@@ -173,14 +201,6 @@
   text-overflow: ellipsis;
 }
 
-.conversationTime {
-  font-size: 0.75rem;
-  color: #aaa;
-  flex-shrink: 0;
-  align-self: flex-start;
-  padding-top: 2px;
-}
-
 .emptyHint {
   padding: 2rem 1.5rem;
   font-size: 0.88rem;
@@ -188,16 +208,8 @@
   text-align: center;
 }
 
-/* ── Chat panel ──────────────────────────────────────────────────────── */
+/* ── Chat panel details ──────────────────────────────────────────────── */
 
-.chatPanel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* Empty state */
 .emptyChat {
   flex: 1;
   display: flex;
@@ -219,7 +231,6 @@
   color: #aaa;
 }
 
-/* Chat header */
 .chatHeader {
   display: flex;
   align-items: center;
@@ -232,16 +243,15 @@
 .backButton {
   background: none;
   border: none;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   cursor: pointer;
   color: #555;
-  padding: 0.2rem 0.4rem;
-  border-radius: 6px;
-  transition: background-color 0.15s;
+  padding: 0 0.5rem 0 0;
+  margin-right: 0.5rem;
+  transition: color 0.15s;
 }
 
 .backButton:hover {
-  background-color: #f0e6fc;
   color: #a21ce0;
 }
 
@@ -257,11 +267,6 @@
   color: #111;
 }
 
-.chatHeaderEmail {
-  font-size: 0.8rem;
-  color: #999;
-}
-
 /* Messages area */
 .messagesArea {
   flex: 1;
@@ -274,9 +279,9 @@
 
 .messageBubbleWrapper {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 0.5rem;
-  max-width: 70%;
+  max-width: 85%;
 }
 
 .ownWrapper {
@@ -318,7 +323,7 @@
   font-size: 0.7rem;
   margin-top: 0.25rem;
   opacity: 0.6;
-  text-align: right;
+  text-align: left;
 }
 
 /* Error toast */
@@ -334,62 +339,81 @@
 
 /* Input area */
 .inputArea {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.75rem;
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem; 
   border-top: 1px solid #e5e5e5;
-  flex-shrink: 0;
+  background: white;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  background-color: #f5f5f5;
+}
+
+.inputWrapper:focus-within {
+  border-color: #a21ce0;
+  box-shadow: 0 0 0 1px #a21ce0;
+  background-color: #fff;
 }
 
 .messageInput {
   flex: 1;
-  padding: 0.65rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 22px;
-  font-size: 0.95rem;
-  resize: none;
+  padding: 10px 15px;
+  border: none;
   outline: none;
+  background: transparent;
+  font-size: 1rem;
+  resize: none;
   line-height: 1.4;
   max-height: 120px;
   overflow-y: auto;
-  transition: border-color 0.2s;
-}
-
-.messageInput:focus {
-  border-color: #a21ce0;
 }
 
 .sendButton {
-  width: 42px;
-  height: 42px;
+  width: 80px;
+  height: 38px;
+  margin-right: 2px;
   flex-shrink: 0;
   background-color: #a21ce0;
   color: #fff;
   border: none;
-  border-radius: 50%;
-  font-size: 1.2rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s, transform 0.1s;
-}
-
-.sendButton:hover:not(:disabled) {
-  background-color: #8b16bf;
-}
-
-.sendButton:active:not(:disabled) {
-  transform: scale(0.94);
+  transition:
+    background-color 0.2s,
+    transform 0.1s;
 }
 
 .sendButton:disabled {
-  background-color: #ddd;
+  background-color: #ccc;
   cursor: not-allowed;
 }
 
-/* ── Loader spinner (reused from other pages) ───────────────────────── */
+.sendButton:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.addUserInfo {
+  margin-bottom: 10px;
+  padding-bottom: 2px;
+  margin-left: 10px;
+  border: none;
+  border-bottom: 1px solid #a21ce0;
+  font-size: 0.8rem;
+  color: #a21ce0;
+  background: transparent;
+  cursor: pointer;
+}
 
 .loader {
   width: 60px;
@@ -409,23 +433,35 @@
   }
 }
 
-/* ── Responsive ──────────────────────────────────────────────────────── */
+/* ── Desktop Version (Min-Width 768px) ───────────────────────────────── */
 
-@media (max-width: 640px) {
-  .sidebar {
-    width: 100%;
-    display: none; /* hide sidebar when a chat is open on mobile */
+@media (min-width: 768px) {
+  .page {
+    height: 88vh;
+    margin: 10px;
+    border-radius: 15px;
+    box-shadow: 0 0px 10px 0px rgb(0 0 0 / 25%);
   }
 
-  .sidebar.visible {
-    display: flex;
+  .sidebar {
+    width: 320px;
+    border-right: 1px solid #e5e5e5;
   }
 
   .chatPanel {
+    flex: 1;
+    width: auto;
+  }
+
+  .hiddenOnMobile {
+    display: flex !important;
+  }
+
+  .backButton {
     display: none;
   }
 
-  .chatPanel.visible {
-    display: flex;
+  .messageBubbleWrapper {
+    max-width: 70%;
   }
 }

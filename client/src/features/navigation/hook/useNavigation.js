@@ -5,7 +5,7 @@
   import { useEffect, useState } from 'react'
   import { useNavigate } from 'react-router-dom'
 
-  import { getAllNavigation } from '@features/navigation/services/navigate'
+import { getNavigationItems } from '@features/navigation/services/navigate'
 
   /**
    * Provides top-navigation data and actions.
@@ -21,7 +21,7 @@
       const fetchItems = async () => {
         try {
           setIsLoading(true)
-          const data = await getAllNavigation()
+          const data = await getNavigationItems()
           setNavItems(Array.isArray(data) ? data : [])
         } catch (error) {
           setNavItems([])

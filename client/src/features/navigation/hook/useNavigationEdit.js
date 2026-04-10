@@ -2,7 +2,7 @@
  * Navigation editor hook.
  * Handles CRUD operations, drag-and-drop ordering, and child item management.
  */
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
 	KeyboardSensor,
 	PointerSensor,
@@ -10,23 +10,20 @@ import {
 	useSensors,
 } from '@dnd-kit/core'
 import {
-	arrayMove,
 	sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable'
 
-import { getAllNavigation, deleteNavigationItem, createNavigationItem, updateNavigationItem, deleteChildNavigation } from '@features/navigation/services/navigate'
+import { getNavigationItems, deleteNavigationItem, createNavigationItem, reorderNavigationTree } from '@features/navigation/services/navigate'
 
-
-/**
- * Provides full state and actions for navigation editor UI.
- * @returns {object} Navigation editor state and handlers.
- */
 function useNavigationEdit() {
 	const [items, setItems] = useState([])
 	const [error, setError] = useState(null)
 	const [isLoading, setIsLoading] = useState(false)
-
-	const [formData, setFormData] = useState({ name: '', path: '' })
+	const [collapsed, setCollapsed] = useState({})
+	const [formData, setFormData] = useState({ title: '', path: '' })
+	const itemsRef = useRef([])
+	const reorderQueueRef = useRef(Promise.resolve())
+	const latestReorderTokenRef = useRef(0)
 
 	const sensors = useSensors(
 		useSensor(PointerSensor),
@@ -35,136 +32,121 @@ function useNavigationEdit() {
 		}),
 	)
 
-	/**
-	 * Updates create-item form values.
-	 * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event.
-	 * @returns {void}
-	 */
 	const handleChange = (e) => {
 		const { name, value } = e.target
 		setFormData({ ...formData, [name]: value })
 	}
 
-	/**
-	 * Creates a new navigation item from form data.
-	 * @returns {Promise<void>}
-	 */
-
 	const generatePath = (path) => {
-		return '/' + path
-			.toLowerCase()
-			.trim()
-			.split(' ')
-			.join('_')
+		return '/' + path.toLowerCase().trim().split(' ').join('_')
 	}
 
 	const handleCreateItem = async () => {
-		if (!formData.name.trim() || !formData.path.trim()) return
-
+		if (!formData.title.trim() || !formData.path.trim()) return
 		try {
-			const response = await createNavigationItem({ ...formData, path: generatePath(formData.path) })
-
-			const newItem = response.json || response
-			setItems((prev => [...prev, newItem]))
-
-			setFormData({ name: '', path: '' })
+			await createNavigationItem({ ...formData, path: generatePath(formData.path) })
+			setFormData({ title: '', path: '' })
+			const data = await getNavigationItems()
+			const safeItems = Array.isArray(data) ? data : []
+			setItems(safeItems)
+			itemsRef.current = safeItems
 		} catch (error) {
 			setError(error.message)
 		}
 	}
 
 	/**
-	 * Persists reordered navigation after drag-and-drop.
-	 * @param {{active: {id: string}, over?: {id: string}}} event - DnD end event.
-	 * @returns {Promise<void>}
+	 * Accepts the full reordered tree (after drag-and-drop) and saves it.
+	 * Sends the entire tree to the backend so nesting (childMenu) and order are both persisted.
 	 */
-	const handleDragEnd = async (event) => {
-		const { active, over } = event
+	const handleItemReorder = async (newTree) => {
+		const previousTree = itemsRef.current
+		const opId = Date.now()
+		const token = ++latestReorderTokenRef.current
+		console.debug('[NAV_REORDER] before optimistic update', {
+			opId,
+			token,
+			prevSize: previousTree.length,
+			nextSize: newTree.length,
+		})
+		setItems(newTree)
+		itemsRef.current = newTree
 
-		if (over && active.id !== over.id) {
-			const oldIndex = items.findIndex((item) => item._id === active.id)
-			const newIndex = items.findIndex((item) => item._id === over.id)
-			const reorderedItems = arrayMove(items, oldIndex, newIndex)
-
-			setItems(reorderedItems)
+		const syncReorder = async () => {
 			try {
-				const dataToSave = reorderedItems.map((item, index) => ({
-					_id: item._id,
-					index: index + 1
-				}))
-
-				await updateNavigationItem(dataToSave)
+				console.debug('[NAV_REORDER] sending payload', {
+					opId,
+					token,
+					tree: newTree,
+				})
+				await reorderNavigationTree(newTree)
+				console.debug('[NAV_REORDER] request success', { opId, token })
 			} catch (err) {
-				throw new Error(err.message || 'Failed to update navigation item')
+				const isLatest = token === latestReorderTokenRef.current
+				console.error('[NAV_REORDER] request failed', {
+					opId,
+					token,
+					isLatest,
+					error: err?.message,
+				})
+				// Prevent stale rollback: older failed requests must not override newer optimistic UI.
+				if (isLatest) {
+					setItems(previousTree)
+					itemsRef.current = previousTree
+				}
+				throw err
 			}
+		}
+
+		reorderQueueRef.current = reorderQueueRef.current.then(syncReorder, syncReorder)
+
+		try {
+			await reorderQueueRef.current
+		} catch (err) {
+			console.error('Failed to reorder navigation:', err.message)
 		}
 	}
 
-	/**
-	 * Deletes one navigation item by id.
-	 * @param {string} id - Navigation id.
-	 * @returns {Promise<void>}
-	 */
+	const removeFromTree = (tree, idToRemove) => {
+		return tree
+			.filter((item) => item._id !== idToRemove)
+			.map((item) => ({
+				...item,
+				childMenu: item.childMenu
+					? removeFromTree(item.childMenu, idToRemove)
+					: [],
+			}))
+	}
+
 	const handleDeleteItem = async (id) => {
+		const prevItems = items
+		const newItems = removeFromTree(items, id)
+		setItems(newItems)
 		try {
 			await deleteNavigationItem(id)
-
-			setItems((prev) => prev.filter((item) => item._id !== id))
+			await reorderNavigationTree(newItems)
 		} catch (error) {
-			const backenError = error.response?.data
-			console.error('Failed to delete navigation item:', backenError || error.message)
-			throw new Error(backenError?.message || 'Failed to delete navigation item')
+			setItems(prevItems)
+			console.error('Failed to delete navigation item:', error.message)
 		}
 	}
 
-	/**
-	 * Deletes one child menu item from a parent entry.
-	 * @param {string} parentId - Parent navigation id.
-	 * @param {string} childId - Child menu id.
-	 * @returns {Promise<void>}
-	 */
-	const handleDeleteChild = async (parentId, childId) => {
-		try {
-			const response = await deleteChildNavigation(parentId, childId)
-
-			const updatedParent = response?.json || response
-			const hasUpdatedParentShape =
-				updatedParent &&
-				typeof updatedParent === 'object' &&
-				updatedParent._id === parentId &&
-				Array.isArray(updatedParent.childMenu)
-
-			if (hasUpdatedParentShape) {
-				setItems((prev) =>
-					prev.map((item) => (item._id === parentId ? updatedParent : item)),
-				)
-				return
-			}
-
-			// Fallback: backend didn't return updated parent; update client state locally.
-			setItems((prev) =>
-				prev.map((item) => {
-					if (item._id !== parentId) return item
-					const nextChildMenu = Array.isArray(item.childMenu)
-						? item.childMenu.filter((child) => child._id !== childId)
-						: item.childMenu
-					return { ...item, childMenu: nextChildMenu }
-				}),
-			)
-		} catch (err) {
-			throw new Error(err.message || 'Failed to delete child navigation')
-		}
+	const handleCollapse = (id) => {
+		setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }))
 	}
+
+	useEffect(() => {
+		itemsRef.current = items
+	}, [items])
 
 	useEffect(() => {
 		const fetchItems = async () => {
 			try {
 				setIsLoading(true)
-				const response = await getAllNavigation()
-
-				const data = response.json || response
-
-				setItems(Array.isArray(data) ? data : [])
+				const data = await getNavigationItems()
+				const safeItems = Array.isArray(data) ? data : []
+				setItems(safeItems)
+				itemsRef.current = safeItems
 			} catch (error) {
 				setItems([])
 				setError(error.message)
@@ -176,16 +158,17 @@ function useNavigationEdit() {
 	}, [])
 
 	return {
-		handleDragEnd,
 		handleDeleteItem,
 		handleChange,
 		handleCreateItem,
-		handleDeleteChild,
+		handleItemReorder,
+		handleCollapse,
 		sensors,
 		items,
 		error,
 		isLoading,
-		formData
+		formData,
+		collapsed,
 	}
 }
 

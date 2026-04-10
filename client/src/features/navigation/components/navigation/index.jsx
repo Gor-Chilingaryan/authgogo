@@ -57,7 +57,7 @@ function Navigation() {
                     className={style.navItemLink}
                     onClick={closeMenu}
                   >
-                    {item.name}
+                    {item.title}
                     {hasChildren && (
                       <img
                         src={chevronDown}
@@ -75,7 +75,7 @@ function Navigation() {
                           key={child._id}
                           onClick={closeMenu}
                         >
-                          {child.name}
+                          {child.title}
                         </Link>
                       ))}
                     </div>

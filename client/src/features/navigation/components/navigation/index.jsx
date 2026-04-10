@@ -1,44 +1,109 @@
-import React, { useState } from 'react'; // Добавили useState
-import style from './navigation.module.css';
-import { Link } from 'react-router-dom';
-import { useNavigation } from '@features/navigation/hook/useNavigation';
-import penIcon from '@assets/icons/pen.svg';
-import chevronDown from '@assets/icons/chevron-down.svg?url';
+import React, { useCallback, useState } from 'react'
+import { Link } from 'react-router-dom'
+
+import { useNavigation } from '@features/navigation/hook/useNavigation'
+import penIcon from '@assets/icons/pen.svg'
+import chevronDown from '@assets/icons/chevron-down.svg?url'
+
+import style from './navigation.module.css'
+
+function NavDropdownLinks({ nodes, onNavigate, depth = 0 }) {
+  if (!nodes?.length) return null
+
+  return nodes.map((node) => (
+    <React.Fragment key={node._id}>
+      <Link
+        to={node.path || '#'}
+        className={style.dropDownLink}
+        style={{ paddingLeft: `${12 + depth * 12}px` }}
+        onClick={onNavigate}
+      >
+        {node.title}
+      </Link>
+      {node.children?.length > 0 && (
+        <NavDropdownLinks
+          nodes={node.children}
+          onNavigate={onNavigate}
+          depth={depth + 1}
+        />
+      )}
+    </React.Fragment>
+  ))
+}
+
+function NavDropdown({ parent, onNavigate }) {
+  const { children } = parent
+  if (!children?.length) return null
+
+  return (
+    <div className={style.dropDown}>
+      <NavDropdownLinks nodes={children} onNavigate={onNavigate} depth={0} />
+    </div>
+  )
+}
+
+function DynamicNavItem({ node, onNavigate }) {
+  const hasChildren = node.children?.length > 0
+
+  return (
+    <div className={style.navItem}>
+      <div className={style.navItemWrapper}>
+        <Link
+          to={node.path || '#'}
+          className={style.navItemLink}
+          onClick={onNavigate}
+        >
+          {node.title}
+          {hasChildren && (
+            <img
+              src={chevronDown}
+              alt=''
+              className={style.chevron}
+              aria-hidden
+            />
+          )}
+        </Link>
+        {hasChildren && <NavDropdown parent={node} onNavigate={onNavigate} />}
+      </div>
+    </div>
+  )
+}
 
 function Navigation() {
-  const { navItems, error, isLoading, handleEditNavigation } = useNavigation();
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // Состояние меню
+  const { navRoots, error, isLoading, handleEditNavigation } = useNavigation()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const closeMenu = () => setIsMenuOpen(false);
+  const closeMenu = useCallback(() => setIsMenuOpen(false), [])
+  const toggleMenu = useCallback(() => setIsMenuOpen((open) => !open), [])
 
-  if (isLoading) return <span className={style.loader} />;
-  if (error) return <div className={style.error}>{error}</div>;
+  if (isLoading) return <span className={style.loader} />
+  if (error) return <div className={style.error}>{error}</div>
 
   return (
     <div className={style.navigation_container}>
-      {/* Бургер-кнопка */}
-      <div
+      <button
+        type='button'
         className={`${style.burger} ${isMenuOpen ? style.burgerActive : ''}`}
         onClick={toggleMenu}
+        aria-expanded={isMenuOpen}
+        aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
       >
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+        <span />
+        <span />
+        <span />
+      </button>
 
-      {/* Контейнер навигации */}
       <div
         className={`${style.navItems_container} ${isMenuOpen ? style.navOpen : ''}`}
       >
         <div className={style.navItem}>
-          <Link to={'/home'} className={style.navItemLink} onClick={closeMenu}>
+          <Link to='/home' className={style.navItemLink} onClick={closeMenu}>
             Home
           </Link>
         </div>
         <div className={style.navItem}>
           <Link
-            to={'/messenger'}
+            to='/messenger'
             className={style.navItemLink}
             onClick={closeMenu}
           >
@@ -46,51 +111,25 @@ function Navigation() {
           </Link>
         </div>
 
-        {Array.isArray(navItems) &&
-          navItems.map((item) => {
-            const hasChildren = item.childMenu && item.childMenu.length > 0;
-            return (
-              <div key={item._id} className={style.navItem}>
-                <div className={style.navItemWrapper}>
-                  <Link
-                    to={item.path}
-                    className={style.navItemLink}
-                    onClick={closeMenu}
-                  >
-                    {item.title}
-                    {hasChildren && (
-                      <img
-                        src={chevronDown}
-                        alt='Chevron'
-                        className={style.chevron}
-                      />
-                    )}
-                  </Link>
-                  {hasChildren && (
-                    <div className={style.dropDown}>
-                      {item.childMenu.map((child) => (
-                        <Link
-                          to={child.path}
-                          className={style.dropDownLink}
-                          key={child._id}
-                          onClick={closeMenu}
-                        >
-                          {child.title}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+        {navRoots.map((node) => (
+          <DynamicNavItem
+            key={node._id}
+            node={node}
+            onNavigate={closeMenu}
+          />
+        ))}
       </div>
 
-      <button className={style.editButton} onClick={handleEditNavigation}>
-        <img src={penIcon} alt='Edit icon' />
+      <button
+        type='button'
+        className={style.editButton}
+        onClick={handleEditNavigation}
+        aria-label='Edit navigation'
+      >
+        <img src={penIcon} alt='' />
       </button>
     </div>
-  );
+  )
 }
 
-export { Navigation };
+export { Navigation }

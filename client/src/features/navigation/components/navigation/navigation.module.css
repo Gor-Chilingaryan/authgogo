@@ -17,7 +17,10 @@
   width: 25px;
   height: 20px;
   cursor: pointer;
-  order: 2; 
+  order: 2;
+  border: none;
+  background: transparent;
+  padding: 0;
 }
 
 .burger span {

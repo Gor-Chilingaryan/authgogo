@@ -1,50 +1,56 @@
-  /**
-   * Navigation hook.
-   * Fetches user navigation items and exposes redirect action to edit page.
-   */
-  import { useEffect, useState } from 'react'
-  import { useNavigate } from 'react-router-dom'
+/**
+ * Navigation hook.
+ * Fetches user navigation items (flat list from API) and exposes tree-shaped data for the bar + edit action.
+ */
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { getNavigationItems } from '@features/navigation/services/navigate'
+import { flatNavToTree } from '@features/navigation/utils/flatNavToTree'
 
-  /**
-   * Provides top-navigation data and actions.
-   * @returns {{navItems: Array, error: string|null, isLoading: boolean, handleEditNavigation: Function}} Hook API.
-   */
-  export function useNavigation() {
-    const navigate = useNavigate()
-    const [navItems, setNavItems] = useState([])
-    const [error, setError] = useState(null)
-    const [isLoading, setIsLoading] = useState(false)
+export function useNavigation() {
+  const navigate = useNavigate()
+  const [flatItems, setFlatItems] = useState([])
+  const [error, setError] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
-    useEffect(() => {
-      const fetchItems = async () => {
-        try {
-          setIsLoading(true)
-          const data = await getNavigationItems()
-          setNavItems(Array.isArray(data) ? data : [])
-        } catch (error) {
-          setNavItems([])
-          setError(error.message)
-        } finally {
-          setIsLoading(false)
-        }
+  useEffect(() => {
+    let cancelled = false
+
+    const fetchItems = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
+        const data = await getNavigationItems()
+        if (cancelled) return
+        setFlatItems(Array.isArray(data) ? data : [])
+      } catch (err) {
+        if (cancelled) return
+        setFlatItems([])
+        setError(err?.message ?? 'Failed to load navigation')
+      } finally {
+        if (!cancelled) setIsLoading(false)
       }
-      fetchItems()
-    }, [])
-
-    /**
-     * Redirects user to navigation editor.
-     * @returns {void}
-     */
-    const handleEditNavigation = () => {
-      navigate('/navigation-edit')
     }
 
-    return {
-      navItems,
-      error,
-      isLoading,
-      handleEditNavigation
+    fetchItems()
+    return () => {
+      cancelled = true
     }
+  }, [])
+
+  const navRoots = useMemo(() => flatNavToTree(flatItems), [flatItems])
+
+  const handleEditNavigation = useCallback(() => {
+    navigate('/navigation-edit')
+  }, [navigate])
+
+  return {
+    navRoots,
+    /** Raw flat list if needed elsewhere */
+    flatNavItems: flatItems,
+    error,
+    isLoading,
+    handleEditNavigation,
   }
+}

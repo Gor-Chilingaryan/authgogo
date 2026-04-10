@@ -51,8 +51,6 @@
   height: 18px;
 }
 
-
-
 .navigationEdit_creating_input_container {
   display: flex;
   flex-direction: column;
@@ -79,7 +77,9 @@
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
 }
 
 .navigationEdit_creating_add_button:hover {
@@ -117,13 +117,16 @@
   border-radius: 14px;
   background-color: #ffffff;
   border: 1px solid #ebebeb;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000000;
 }
 
 .navigationEdit_list_item_name {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: #888;
+  color: #000000;
   flex: 1;
 }
 
@@ -168,7 +171,9 @@
 
 .treeItem_wrapper.dragOverlay > .treeItem_root {
   background: #ffffff;
-  box-shadow: 0 12px 32px rgba(177, 78, 224, 0.22), 0 2px 8px rgba(0,0,0,0.10);
+  box-shadow:
+    0 12px 32px rgba(177, 78, 224, 0.22),
+    0 2px 8px rgba(0, 0, 0, 0.1);
   border: 1.5px solid #d89bf0;
   transform: scale(1.02);
 }
@@ -181,14 +186,16 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 6px;
+  gap: 15px;
   padding: 11px 14px 11px 10px;
   border-radius: 14px;
   background-color: #ffffff;
   border: 1px solid #ebebeb;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
-  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .treeItem_root:hover {
@@ -204,18 +211,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 21px;
+  height: 21px;
   padding: 0;
   border: none;
   background: transparent;
   cursor: grab;
-  color: #ccc;
-  font-size: 1.15rem;
+  font-size: 1rem;
   flex-shrink: 0;
   touch-action: none;
   border-radius: 6px;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 
 .dragHandle:hover {
@@ -226,42 +234,6 @@
 .dragHandle:active {
   cursor: grabbing;
   color: #b14ee0;
-}
-
-/* ═══════════════════════════════════════════════════
-   COLLAPSE BUTTON
-═══════════════════════════════════════════════════ */
-
-.collapseButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  padding: 0;
-  border: none;
-  background: #f0d9fa;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #b14ee0;
-  font-size: 0.55rem;
-  flex-shrink: 0;
-  transition: transform 0.2s ease, background 0.15s ease;
-  transform: rotate(90deg);
-}
-
-.collapseButton:hover {
-  background: #e4bdf7;
-}
-
-.collapseButton.collapsed {
-  transform: rotate(0deg);
-}
-
-.collapseButton_placeholder {
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
 }
 
 /* ═══════════════════════════════════════════════════
@@ -287,18 +259,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   padding: 0;
   border: none;
   background: transparent;
   color: #ccc;
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   line-height: 1;
   cursor: pointer;
   flex-shrink: 0;
   border-radius: 6px;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 
 .deleteButton:hover {
@@ -311,10 +285,9 @@
 ═══════════════════════════════════════════════════ */
 
 /* Items with depth > 0 get a left accent */
-.treeItem_wrapper[style*="--spacing: 30px"] > .treeItem_root,
-.treeItem_wrapper[style*="--spacing: 60px"] > .treeItem_root,
-.treeItem_wrapper[style*="--spacing: 90px"] > .treeItem_root {
-  border-left: 3px solid #d4a8f0;
+.treeItem_wrapper[style*='--spacing: 30px'] > .treeItem_root,
+.treeItem_wrapper[style*='--spacing: 60px'] > .treeItem_root,
+.treeItem_wrapper[style*='--spacing: 90px'] > .treeItem_root {
   background: #fdf7ff;
 }
 
@@ -334,8 +307,12 @@
 }
 
 @keyframes rotation {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error {
@@ -364,7 +341,7 @@
 
   /* Left panel — fixed sidebar feel */
   .navigationEdit_creating {
-    width: 300px;
+    width: 400px;
     min-width: 300px;
     flex-shrink: 0;
     margin-bottom: 0;
@@ -372,7 +349,7 @@
     background: #ffffff;
     min-height: 100vh;
     border-right: 1px solid #ebebeb;
-    box-shadow: 2px 0 12px rgba(0,0,0,0.04);
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.04);
     box-sizing: border-box;
   }
 

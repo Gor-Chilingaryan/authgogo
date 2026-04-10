@@ -35,23 +35,10 @@ export const deleteNavigationItem = async (id) => {
     throw formatApiError('Failed to delete navigation item', error)
   }
 }
-
-
-export const updateNavigationItem = async (newOrder) => {
+export const reorderNavigationTree = async (items) => {
   try {
-    const response = await api.patch('/update-order', { newOrder })
-    return response.data
-  } catch (error) {
-    console.error('[API] updateNavigationItem failed', error?.response?.data || error)
-    throw formatApiError('Failed to update navigation item', error)
-  }
-}
-
-
-export const reorderNavigationTree = async (tree) => {
-  try {
-    console.debug('[API] reorderNavigationTree request', { tree })
-    const response = await api.patch('/update-tree', { tree })
+    console.debug('[API] reorderNavigationTree request', { items })
+    const response = await api.patch('/update-tree', { items })
     console.debug('[API] reorderNavigationTree response', response.data)
     return response.data
   } catch (error) {

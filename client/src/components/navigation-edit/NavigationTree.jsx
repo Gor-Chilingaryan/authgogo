@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { buildTree, flattenTree, getProjection } from './useTree';
+import { getProjection } from './useTree';
 import style from '@features/navigation/components/navigation-edit/navigationEdit.module.css';
 import {
   DndContext,
@@ -14,7 +14,6 @@ import {
   MeasuringStrategy,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
@@ -30,6 +29,18 @@ const dropAnimation = {
   }),
 };
 
+const getSubtreeEndIndex = (flatItems, rootIndex) => {
+  const rootDepth = flatItems[rootIndex]?.depth ?? 0;
+  let endIndex = rootIndex + 1;
+  while (
+    endIndex < flatItems.length &&
+    (flatItems[endIndex]?.depth ?? 0) > rootDepth
+  ) {
+    endIndex += 1;
+  }
+  return endIndex;
+};
+
 // ─── Pure presentational row ─────────────────────────────────────────────────
 
 const TreeItem = React.forwardRef(
@@ -41,15 +52,12 @@ const TreeItem = React.forwardRef(
       clone,
       dragOverlay,
       onDelete,
-      onCollapse,
       handleProps,
       style: inlineStyle,
       ...rest
     },
     ref
   ) => {
-    const hasChildren = item?.childMenu?.length > 0;
-
     const wrapperClass = [
       style.treeItem_wrapper,
       ghost ? style.ghost : '',
@@ -79,23 +87,7 @@ const TreeItem = React.forwardRef(
             ⠿
           </button>
 
-          {/* ── Collapse toggle / placeholder ── */}
-          {hasChildren && onCollapse ? (
-            <button
-              className={[
-                style.collapseButton,
-                item.collapsed ? style.collapsed : '',
-              ]
-                .filter(Boolean)
-                .join(' ')}
-              onClick={onCollapse}
-              aria-label={item.collapsed ? 'Expand' : 'Collapse'}
-            >
-              ▶
-            </button>
-          ) : (
-            <span className={style.collapseButton_placeholder} />
-          )}
+          <span className={style.collapseButton_placeholder} />
 
           {/* ── title ── */}
           <span className={style.treeItem_label}>{item?.title}</span>
@@ -119,7 +111,7 @@ TreeItem.displayName = 'TreeItem';
 
 // ─── Sortable row ─────────────────────────────────────────────────────────────
 
-function SortableTreeItem({ item, activeId, projected, onDelete, onCollapse }) {
+function SortableTreeItem({ item, activeId, projected, onDelete }) {
   const {
     attributes,
     listeners,
@@ -144,7 +136,6 @@ function SortableTreeItem({ item, activeId, projected, onDelete, onCollapse }) {
       style={{ transform: CSS.Translate.toString(transform), transition }}
       handleProps={{ ...attributes, ...listeners }}
       onDelete={onDelete}
-      onCollapse={onCollapse ? () => onCollapse(item._id) : undefined}
     />
   );
 }
@@ -156,8 +147,6 @@ function NavigationTree({
   isLoading,
   handleItemReorder,
   handleDeleteItem,
-  handleCollapse,
-  collapsed,
 }) {
 
   const [activeId, setActiveId] = useState(null);
@@ -171,46 +160,33 @@ function NavigationTree({
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  // ── Flatten + collapse-filter ──
-  const flattenedItems = useMemo(() => {
-    const flat = flattenTree(items || []);
-
-    const collapsedIds = new Set(
-      flat
-        .filter((i) => i.childMenu?.length && collapsed[i._id])
-        .map((i) => i._id)
-    );
-
-    const isHidden = (parentId) => {
-      let pid = parentId;
-      while (pid) {
-        if (collapsedIds.has(pid)) return true;
-        pid = flat.find((i) => i._id === pid)?.parentId ?? null;
-      }
-      return false;
-    };
-
-    return flat
-      .filter((item) => item.parentId === null || !isHidden(item.parentId))
-      .map((item) => ({ ...item, collapsed: !!collapsed[item._id] }));
-  }, [items, collapsed]);
+  const orderedItems = useMemo(
+    () =>
+      [...(Array.isArray(items) ? items : [])]
+        .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+        .map((item) => ({
+          ...item,
+          depth: Number.isFinite(item.depth) ? Math.max(0, item.depth) : 0,
+        })),
+    [items]
+  );
 
   const projected = useMemo(
     () =>
       activeId && overId
-        ? getProjection(flattenedItems, activeId, overId, offsetLeft)
+        ? getProjection(orderedItems, activeId, overId, offsetLeft)
         : null,
-    [flattenedItems, activeId, overId, offsetLeft]
+    [orderedItems, activeId, overId, offsetLeft]
   );
 
   const activeItem = useMemo(
-    () => flattenedItems.find((i) => i._id === activeId),
-    [activeId, flattenedItems]
+    () => orderedItems.find((i) => i._id === activeId),
+    [activeId, orderedItems]
   );
 
   useEffect(() => {
-    flattenedItemsRef.current = flattenedItems;
-  }, [flattenedItems]);
+    flattenedItemsRef.current = orderedItems;
+  }, [orderedItems]);
 
   useEffect(() => {
     offsetLeftRef.current = offsetLeft;
@@ -243,23 +219,50 @@ function NavigationTree({
       const oi = currentFlat.findIndex((i) => i._id === over.id);
       if (ai < 0 || oi < 0) return;
 
+      const subtreeEnd = getSubtreeEndIndex(currentFlat, ai);
+      const subtreeSize = subtreeEnd - ai;
+      if (oi >= ai && oi < subtreeEnd) return;
+
       const proj = getProjection(currentFlat, active.id, over.id, currentOffset);
       if (!proj) return;
 
-      const next = arrayMove(currentFlat, ai, oi).map((item) =>
-        item._id === active.id
-          ? { ...item, depth: proj.depth, parentId: proj.parentId }
-          : item
-      );
-      const nextTree = buildTree(next);
+      const movedSubtree = currentFlat.slice(ai, subtreeEnd);
+      const remaining = [
+        ...currentFlat.slice(0, ai),
+        ...currentFlat.slice(subtreeEnd),
+      ];
+
+      const insertionIndex = oi > ai ? oi - subtreeSize + 1 : oi;
+
+      const depthDelta = Math.max(0, proj.depth) - (movedSubtree[0]?.depth ?? 0);
+      const adjustedSubtree = movedSubtree.map((item, index) => ({
+        ...item,
+        depth:
+          index === 0
+            ? Math.max(0, proj.depth)
+            : Math.max(0, (item.depth ?? 0) + depthDelta),
+      }));
+
+      const next = [
+        ...remaining.slice(0, insertionIndex),
+        ...adjustedSubtree,
+        ...remaining.slice(insertionIndex),
+      ];
+
+      const nextItems = next.map((item, index) => ({
+        ...item,
+        position: index + 1,
+      }));
       console.debug('[DND] reorder computed', {
         movedFrom: ai,
         movedTo: oi,
-        treeSize: nextTree.length,
+        subtreeSize,
+        insertionIndex,
+        itemsSize: nextItems.length,
       });
 
       reset();
-      await handleItemReorder(nextTree);
+      await handleItemReorder(nextItems);
     } finally {
       // ensure DnD internal state is always cleaned even if API fails
       reset();
@@ -289,18 +292,17 @@ function NavigationTree({
         onDragCancel={onDragCancel}
       >
         <SortableContext
-          items={flattenedItems.map((i) => i._id)}
+          items={orderedItems.map((i) => i._id)}
           strategy={verticalListSortingStrategy}
         >
           <div className={style.tree_list}>
-            {flattenedItems.map((item) => (
+            {orderedItems.map((item) => (
               <SortableTreeItem
                 key={item._id}
                 item={item}
                 activeId={activeId}
                 projected={projected}
                 onDelete={handleDeleteItem}
-                onCollapse={handleCollapse}
               />
             ))}
           </div>

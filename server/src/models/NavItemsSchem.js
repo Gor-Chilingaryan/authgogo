@@ -28,17 +28,6 @@ const NavItemsSchema = new Schema(
       trim: true,
     },
 
-    index: {
-      type: Number,
-      default: 100,
-      index: true,
-    },
-
-    childMenu: {
-      type: [Schema.Types.Mixed],
-      default: [],
-    },
-
     position: {
       type: Number,
       required: true,

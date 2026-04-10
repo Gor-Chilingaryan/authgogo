@@ -10,7 +10,6 @@ import {
   deleteNavItem,
   updateNaviagtionController,
   updateTreeController,
-
 } from '../controllers/navigate.controller.js'
 
 const router = express.Router()
@@ -18,17 +17,9 @@ const router = express.Router()
 router.get('/nav-items', authMiddleware, getNavItems)
 router.post('/nav-item', authMiddleware, createNavItem)
 router.delete('/nav-item/:id', authMiddleware, deleteNavItem)
-
-
-//es erkusy arac chi
-
 // Legacy flat-order update (kept for backward compat)
 router.patch('/update-order', authMiddleware, updateNaviagtionController)
 
-
-//es frontum chka
-// New: full tree reorder (index + childMenu nesting)
+// Flat list reorder update (position + depth [+ derived parentId])
 router.patch('/update-tree', authMiddleware, updateTreeController)
-
-
 export default router

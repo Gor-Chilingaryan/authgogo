@@ -1,40 +1,88 @@
-/**
- * Navigation editor hook.
- * Handles CRUD operations, drag-and-drop ordering, and child item management.
- */
+
 import { useEffect, useRef, useState } from 'react'
-import {
-	KeyboardSensor,
-	PointerSensor,
-	useSensor,
-	useSensors,
-} from '@dnd-kit/core'
-import {
-	sortableKeyboardCoordinates,
-} from '@dnd-kit/sortable'
 
 import { getNavigationItems, deleteNavigationItem, createNavigationItem, reorderNavigationTree } from '@features/navigation/services/navigate'
+
+const deriveParentIds = (flatItems) => {
+	const items = [...flatItems].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+	return items.map((item, index) => {
+		const depth = Number.isFinite(item.depth) ? Math.max(0, item.depth) : 0
+		if (depth === 0) return { ...item, depth: 0, parentId: null }
+
+		let parentId = null
+		let bestDepth = -1
+		for (let i = index - 1; i >= 0; i -= 1) {
+			const prevDepth = Number.isFinite(items[i].depth) ? Math.max(0, items[i].depth) : 0
+			if (prevDepth < depth) {
+				parentId = items[i]._id
+				bestDepth = prevDepth
+				if (prevDepth === depth - 1) break
+			}
+		}
+
+		return {
+			...item,
+			depth: bestDepth >= 0 ? depth : 0,
+			parentId: bestDepth >= 0 ? parentId : null,
+		}
+	})
+}
+
+const removeSubtreeById = (flatItems, idToDelete) => {
+	const ordered = [...flatItems].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+	const startIndex = ordered.findIndex((item) => item._id === idToDelete)
+	if (startIndex < 0) return ordered
+
+	const parentDepth = Number.isFinite(ordered[startIndex]?.depth)
+		? Math.max(0, ordered[startIndex].depth)
+		: 0
+
+	let endIndex = startIndex + 1
+	while (endIndex < ordered.length) {
+		const depth = Number.isFinite(ordered[endIndex]?.depth)
+			? Math.max(0, ordered[endIndex].depth)
+			: 0
+		if (depth <= parentDepth) break
+		endIndex += 1
+	}
+
+	return [
+		...ordered.slice(0, startIndex),
+		...ordered.slice(endIndex),
+	]
+}
+
+const normalizeFlatItems = (flatItems) =>
+	deriveParentIds(
+		[...(Array.isArray(flatItems) ? flatItems : [])]
+			.sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+			.map((item, index) => ({
+				...item,
+				position: Number.isFinite(item.position) ? item.position : index + 1,
+				depth: Number.isFinite(item.depth) ? Math.max(0, item.depth) : 0,
+			}))
+	)
+
+const toReorderPayload = (flatItems) =>
+	flatItems.map((item) => ({
+		_id: item._id,
+		position: item.position,
+		depth: Number.isFinite(item.depth) ? Math.max(0, item.depth) : 0,
+		parentId: item.parentId ?? null,
+	}))
 
 function useNavigationEdit() {
 	const [items, setItems] = useState([])
 	const [error, setError] = useState(null)
 	const [isLoading, setIsLoading] = useState(false)
-	const [collapsed, setCollapsed] = useState({})
 	const [formData, setFormData] = useState({ title: '', path: '' })
 	const itemsRef = useRef([])
 	const reorderQueueRef = useRef(Promise.resolve())
 	const latestReorderTokenRef = useRef(0)
 
-	const sensors = useSensors(
-		useSensor(PointerSensor),
-		useSensor(KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates,
-		}),
-	)
-
 	const handleChange = (e) => {
 		const { name, value } = e.target
-		setFormData({ ...formData, [name]: value })
+		setFormData((prev) => ({ ...prev, [name]: value }))
 	}
 
 	const generatePath = (path) => {
@@ -47,9 +95,9 @@ function useNavigationEdit() {
 			await createNavigationItem({ ...formData, path: generatePath(formData.path) })
 			setFormData({ title: '', path: '' })
 			const data = await getNavigationItems()
-			const safeItems = Array.isArray(data) ? data : []
-			setItems(safeItems)
-			itemsRef.current = safeItems
+			const normalizedItems = normalizeFlatItems(data)
+			setItems(normalizedItems)
+			itemsRef.current = normalizedItems
 		} catch (error) {
 			setError(error.message)
 		}
@@ -59,27 +107,29 @@ function useNavigationEdit() {
 	 * Accepts the full reordered tree (after drag-and-drop) and saves it.
 	 * Sends the entire tree to the backend so nesting (childMenu) and order are both persisted.
 	 */
-	const handleItemReorder = async (newTree) => {
-		const previousTree = itemsRef.current
+	const handleItemReorder = async (newItems) => {
+		const normalizedItems = deriveParentIds(newItems)
+		const previousItems = itemsRef.current
 		const opId = Date.now()
 		const token = ++latestReorderTokenRef.current
 		console.debug('[NAV_REORDER] before optimistic update', {
 			opId,
 			token,
-			prevSize: previousTree.length,
-			nextSize: newTree.length,
+			prevSize: previousItems.length,
+			nextSize: normalizedItems.length,
 		})
-		setItems(newTree)
-		itemsRef.current = newTree
+		setItems(normalizedItems)
+		itemsRef.current = normalizedItems
 
 		const syncReorder = async () => {
+			const payload = toReorderPayload(normalizedItems)
 			try {
 				console.debug('[NAV_REORDER] sending payload', {
 					opId,
 					token,
-					tree: newTree,
+					items: payload,
 				})
-				await reorderNavigationTree(newTree)
+				await reorderNavigationTree(payload)
 				console.debug('[NAV_REORDER] request success', { opId, token })
 			} catch (err) {
 				const isLatest = token === latestReorderTokenRef.current
@@ -91,8 +141,8 @@ function useNavigationEdit() {
 				})
 				// Prevent stale rollback: older failed requests must not override newer optimistic UI.
 				if (isLatest) {
-					setItems(previousTree)
-					itemsRef.current = previousTree
+					setItems(previousItems)
+					itemsRef.current = previousItems
 				}
 				throw err
 			}
@@ -107,32 +157,19 @@ function useNavigationEdit() {
 		}
 	}
 
-	const removeFromTree = (tree, idToRemove) => {
-		return tree
-			.filter((item) => item._id !== idToRemove)
-			.map((item) => ({
-				...item,
-				childMenu: item.childMenu
-					? removeFromTree(item.childMenu, idToRemove)
-					: [],
-			}))
-	}
-
 	const handleDeleteItem = async (id) => {
 		const prevItems = items
-		const newItems = removeFromTree(items, id)
+		const withoutSubtree = removeSubtreeById(items, id)
+		const newItems = deriveParentIds(withoutSubtree
+			.map((item, index) => ({ ...item, position: index + 1 })))
 		setItems(newItems)
 		try {
 			await deleteNavigationItem(id)
-			await reorderNavigationTree(newItems)
+			await reorderNavigationTree(toReorderPayload(newItems))
 		} catch (error) {
 			setItems(prevItems)
 			console.error('Failed to delete navigation item:', error.message)
 		}
-	}
-
-	const handleCollapse = (id) => {
-		setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }))
 	}
 
 	useEffect(() => {
@@ -144,9 +181,9 @@ function useNavigationEdit() {
 			try {
 				setIsLoading(true)
 				const data = await getNavigationItems()
-				const safeItems = Array.isArray(data) ? data : []
-				setItems(safeItems)
-				itemsRef.current = safeItems
+				const normalized = normalizeFlatItems(data)
+				setItems(normalized)
+				itemsRef.current = normalized
 			} catch (error) {
 				setItems([])
 				setError(error.message)
@@ -162,13 +199,10 @@ function useNavigationEdit() {
 		handleChange,
 		handleCreateItem,
 		handleItemReorder,
-		handleCollapse,
-		sensors,
 		items,
 		error,
 		isLoading,
 		formData,
-		collapsed,
 	}
 }
 

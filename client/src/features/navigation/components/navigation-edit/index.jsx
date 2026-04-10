@@ -16,12 +16,10 @@ function NavigationEdit() {
     handleCreateItem,
     handleItemReorder,
     handleDeleteItem,
-    handleCollapse,
     items,
     error,
     formData,
     isLoading,
-    collapsed,
   } = useNavigationEdit();
 
   if (isLoading) return <span className={style.loader} />;
@@ -82,8 +80,6 @@ function NavigationEdit() {
           isLoading={isLoading}
           handleItemReorder={handleItemReorder}
           handleDeleteItem={handleDeleteItem}
-          handleCollapse={handleCollapse}
-          collapsed={collapsed}
         />
       </div>
     </div>

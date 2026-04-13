@@ -9,7 +9,7 @@ import style from './userInfo.module.css';
 import { useUserInfo } from '@features/home-page/hook/useUserInfo';
 import InputWithLabel from '@components/input-label/InputWithLabel';
 import cameraPlusIcon from '@assets/icons/camera-plus.svg';
-import {UserAvatarModal} from '@components/user-avatar-modal/userAvatarModal';
+import { UserAvatarModal } from '@/components/user-avatar-modal/userAvatarModal';
 
 /**
  * Renders authenticated user profile form and controls.
@@ -19,19 +19,30 @@ function UserInfo() {
   const {
     userInfo,
     error,
-    isLoading,
     isModalOpen,
-    setIsModalOpen,
+    isLoading,
+    preview,
     handleDesableInput,
-    handleAvatarChange,
+    handleFileChange,
+    handleUploadImage,
+    toggleModal,
+    isUploading,
     disableInput,
     handleChange,
     handleSaveValues,
     handleLogout,
   } = useUserInfo();
 
-  if (isLoading) return <span className={style.loader} />;
+  if (isLoading && !userInfo) {
+    return (
+      <div className={style.loadingContainer}>
+        <div className={style.mainSpinner} />
+        <p>Loading your profile...</p>
+      </div>
+    );
+  }
   if (error) return <div className={style.error}>Error: {error}</div>;
+
   if (!userInfo) return null;
 
   const userInfoData = [
@@ -68,26 +79,30 @@ function UserInfo() {
 
   return (
     <div className={style.userInfo_container}>
+      {isModalOpen && (
+        <UserAvatarModal
+          isModalOpen={isModalOpen}
+          handleOpenModal={toggleModal}
+          preview={preview}
+          handleFileChange={handleFileChange}
+          handleSubmit={handleUploadImage}
+          loading={isLoading}
+        />
+      )}
       <div className={style.userInfo_avatar_wrapper}>
         <img
-          src={userInfo.avatar || '/user-images/default_user.png'}
-          alt={'User Avatar'}
+          src={userInfo.avatar || '/default_user.png'}
+          alt={'avatar'}
           className={style.userInfo_avatar}
         />
+
         <img
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => toggleModal()}
           src={cameraPlusIcon}
           className={style.addAvatarIcon}
           alt='add avatar icon'
         />
       </div>
-      {isModalOpen && (
-        <UserAvatarModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSelectAvatar={(url) => handleAvatarChange(url)}
-        />
-      )}
 
       <div className={style.userInformation}>
         {userInfoData.map((field) => {

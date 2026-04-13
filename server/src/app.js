@@ -10,15 +10,28 @@ import navigateRouter from './routes/navigate.routes.js'
 import userInfoRouter from './routes/userInfo.route.js'
 import messageRouter from './routes/message.routes.js'
 import cookieParser from 'cookie-parser'
-
+import uploadRouter from './routes/uploud.routes.js'
 const app = express()
 
 // CORS: allow the browser SPA origin to call this API with cookies (Authorization via HttpOnly cookies + credentials: true).
 // CLIENT_ORIGIN must match the Vite dev server or deployed frontend URL, or the browser will block cross-origin responses.
+// app.js
+
+// 1. Убедись, что CORS стоит ПЕРВЫМ среди middleware
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  origin: 'http://localhost:5173', // Пишем напрямую для теста
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  optionsSuccessStatus: 200
 }))
+
+app.use(express.json())
+app.use(cookieParser())
+
+// ... роуты
+app.use('/api/users', uploadRouter)
+
 app.use(express.json())
 app.use(cookieParser())
 
@@ -26,7 +39,7 @@ app.use(userRouter)
 app.use(navigateRouter)
 app.use(userInfoRouter)
 app.use(messageRouter)
-
+app.use(uploadRouter)
 /**
  * Lightweight root handler for uptime checks or manual browser hits.
  * @param {import('express').Request} req - Incoming HTTP request.

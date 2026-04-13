@@ -159,9 +159,6 @@ export const reorderTreeService = async (userId, items) => {
       },
     }
   })
-  console.log('[NAV_REORDER_SERVICE] prepared operations', {
-    operationCount: operations.length,
-  })
 
   let txSession = null
   try {

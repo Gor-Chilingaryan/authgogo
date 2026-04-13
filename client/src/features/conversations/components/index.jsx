@@ -5,7 +5,7 @@
 import React from 'react';
 import style from './messenger.module.css';
 import { useMessenger } from '@features/conversations/hook/useMessenger';
-import { Avatar } from '@components/user-avatar-modal/UserAvatarModal';
+import { Avatar } from '@/components/user-avatar-modal/userAvatarModal';
 import loupeIcon from '@assets/icons/loupe.svg';
 
 /**

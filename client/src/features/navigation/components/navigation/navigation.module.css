@@ -31,14 +31,19 @@
   transition: 0.3s;
 }
 
-.burgerActive span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.burgerActive span:nth-child(2) { opacity: 0; }
-.burgerActive span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
+.burgerActive span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.burgerActive span:nth-child(2) {
+  opacity: 0;
+}
+.burgerActive span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
 
 .navItems_container {
   position: fixed;
-  top: 60px; 
+  top: 60px;
   right: -100%;
   width: 100%;
   height: calc(100vh - 60px);
@@ -97,22 +102,17 @@
   transition: transform 0.3s ease;
 }
 
-/* --- ЛОГИКА ДЛЯ БОЛЬШИХ ЭКРАНОВ --- */
-
-@media (min-width: 768px) {
-  
-  /* СКРЫВАЕМ БУРГЕР, ТОЛЬКО ЕСЛИ НЕТ КЛАССА forceMobile */
+@media (min-width: 1246px) {
   .navigation_container:not(.forceMobile) .burger {
     display: none;
   }
 
-  /* ГОРИЗОНТАЛЬНОЕ МЕНЮ, ТОЛЬКО ЕСЛИ НЕТ КЛАССА forceMobile */
   .navigation_container:not(.forceMobile) .navItems_container {
     position: static;
     width: auto;
     height: auto;
     flex-direction: row;
-    gap: 5rem; /* Уменьшил отступ, чтобы 4 элемента влезали лучше */
+    gap: 5rem;
     padding: 0;
     transition: none;
     overflow: visible;
@@ -125,11 +125,10 @@
   }
 
   .navigation_container:not(.forceMobile) .navItemLink {
-    font-size: 2rem; /* Стандартный размер для десктопа */
+    font-size: 2rem;
     font-weight: 600;
   }
 
-  /* ВЫПАДАЮЩЕЕ МЕНЮ (ХОВЕР), ТОЛЬКО ЕСЛИ НЕТ КЛАССА forceMobile */
   .navigation_container:not(.forceMobile) .dropDown {
     position: absolute;
     top: 100%;
@@ -157,15 +156,13 @@
   }
 
   .navigation_container:not(.forceMobile) .editButton {
-    order: 3; 
+    order: 3;
   }
 
-  /* СПЕЦИАЛЬНЫЙ ВИД ДЛЯ forceMobile НА ДЕКСTOПЕ */
-  /* Делаем выезжающее меню не на весь экран, а аккуратной боковой панелью */
   .forceMobile .navItems_container {
-    width: 350px;
+    width: 400px;
     border-left: 1px solid #eee;
-    box-shadow: -5px 0 15px rgba(0,0,0,0.05);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
   }
 }
 
@@ -180,8 +177,12 @@
 }
 
 @keyframes rotation {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error {

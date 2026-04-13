@@ -105,8 +105,6 @@ function useNewPassword() {
     try {
       const data = await newPassword(email, formData.password)
 
-      console.log(data.message)
-
       localStorage.setItem('isLogged', 'true')
       navigate('/home')
     } catch (err) {

@@ -1,37 +1,11 @@
-/**
- * Avatar selection modal component.
- * Presents predefined avatar options and returns selected avatar URL.
- */
 import React from 'react';
-import styles from './userAvatarModal.module.css';
+import style from './userAvatar.module.css';
 
-const AVATARS = [
-  '/user-images/avatar-1.jpeg',
-  '/user-images/avatar-2.jpeg',
-  '/user-images/avatar-3.jpeg',
-  '/user-images/avatar-4.jpeg',
-  '/user-images/avatar-5.jpeg',
-  '/user-images/avatar-6.jpeg',
-  '/user-images/avatar-7.jpeg',
-  '/user-images/avatar-8.jpeg',
-  '/user-images/avatar-9.jpeg',
-  '/user-images/avatar-10.jpeg',
-  '/user-images/avatar-11.jpeg',
-  '/user-images/avatar-12.jpeg',
-];
-
-// ── Small reusable avatar component ──────────────────────────────────────────
-
-/**
- * Renders a circular user avatar image.
- * @param {{user: object, size: number}} props - Avatar props.
- * @returns {JSX.Element} Avatar image.
- */
 function Avatar({ user, size }) {
   return (
     <img
-      src={user.avatar || '/user-images/default_user.png'}
-      alt={`${user.firstName} ${user.lastName}`}
+      src={user?.avatar || '/default_user.png'}
+      alt={`${user?.firstName || 'User'}`}
       style={{
         width: size,
         height: size,
@@ -43,56 +17,60 @@ function Avatar({ user, size }) {
   );
 }
 
-/**
- * Displays avatar picker modal when open.
- * @param {{isOpen: boolean, onClose: Function, onSelectAvatar: Function}} props - Modal props.
- * @returns {JSX.Element|null} Modal content or null when closed.
- */
-function UserAvatarModal({ isOpen, onClose, onSelectAvatar }) {
-  if (!isOpen) return null;
-
-  /**
-   * Closes modal when clicking outside content area.
-   * @param {React.MouseEvent<HTMLDivElement>} e - Click event.
-   * @returns {void}
-   */
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  /**
-   * Selects avatar and closes modal.
-   * @param {string} avatar - Selected avatar URL.
-   * @returns {void}
-   */
-  const handleAvatarClick = (avatar) => {
-    onSelectAvatar(avatar);
-    onClose();
-  };
-
+function UserAvatarModal({
+  handleFileChange,
+  isLoading,
+  preview,
+  handleSubmit,
+  isModalOpen,
+  handleOpenModal,
+}) {
+  if (!isModalOpen) return null;
   return (
-    <div className={styles.modalOverlay} onClick={handleOverlayClick}>
-      <div className={styles.modalContent}>
-        <button className={styles.closeButton} onClick={onClose}>
-          ×
+    <div className={style.modalOverlay} onClick={handleOpenModal}>
+      {/* stopPropagation предотвращает закрытие при клике внутри окна */}
+      <div className={style.modalContent} onClick={(e) => e.stopPropagation()}>
+        <button className={style.closeButton} onClick={handleOpenModal}>
+          &times;
         </button>
-        <h2 className={styles.title}>Select your avatar</h2>
-        <div className={styles.avatarGrid}>
-          {AVATARS.map((avatar, idx) => (
-            <img
-              key={idx}
-              src={avatar}
-              alt={`Avatar ${idx + 1}`}
-              className={styles.avatarIcon}
-              onClick={() => handleAvatarClick(avatar)}
+
+        <h2 className={style.modalTitle}>Update Avatar</h2>
+
+        <div className={style.previewContainer}>
+          <img
+            src={preview || '/default_user.png'}
+            className={style.previewImage}
+            alt='avatar preview'
+          />
+          {isLoading && (
+            <div className={style.loaderOverlay}>
+              <div className={style.spinner} />
+            </div>
+          )}
+        </div>
+
+        <div className={style.uploadActions}>
+          <label className={style.fileInputLabel}>
+            Choose Photo
+            <input
+              type='file'
+              onChange={handleFileChange}
+              accept='image/*'
+              className={style.hiddenInput}
             />
-          ))}
+          </label>
+
+          <button
+            className={style.uploadButton}
+            onClick={handleSubmit}
+            disabled={isLoading || !preview}
+          >
+            {isLoading ? 'Uploading... ' : 'Save Changes'}
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-export { UserAvatarModal, Avatar };
+export { Avatar, UserAvatarModal };

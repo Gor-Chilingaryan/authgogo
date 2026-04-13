@@ -23,7 +23,7 @@ export const registerUser = async (userData) => {
 export const forgotPassword = async (email) => {
   try {
     const response = await api.post('/forgot-password', { email })
-    console.log(response.data)
+
     return response.data
   } catch (error) {
     throw new Error(error.message || 'Forgot password failed')

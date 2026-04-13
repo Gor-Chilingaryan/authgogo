@@ -54,14 +54,6 @@ function DynamicNavItem({ node, onNavigate }) {
           onClick={onNavigate}
         >
           {node.title}
-          {hasChildren && (
-            <img
-              src={chevronDown}
-              alt=''
-              className={style.chevron}
-              aria-hidden
-            />
-          )}
         </Link>
         {hasChildren && <NavDropdown parent={node} onNavigate={onNavigate} />}
       </div>
@@ -73,7 +65,7 @@ function Navigation() {
   const { navRoots, error, isLoading, handleEditNavigation } = useNavigation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // 1. Проверяем, нужно ли принудительно включить мобильный вид
+  
   const isForcedMobile = navRoots?.length > 4;
 
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
@@ -82,7 +74,7 @@ function Navigation() {
   if (isLoading) return <span className={style.loader} />;
   if (error) return <div className={style.error}>{error}</div>;
 
-  // 2. Добавляем класс forceMobile, если элементов > 4
+
   const containerClasses = `${style.navigation_container} ${isForcedMobile ? style.forceMobile : ''}`;
 
   return (

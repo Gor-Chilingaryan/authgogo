@@ -46,18 +46,13 @@ export const updateTreeController = async (req, res) => {
   try {
     const { items } = req.body
     const userId = req.user._id
-    console.log('[NAV_UPDATE_TREE] incoming payload', {
-      userId: String(userId),
-      itemsLength: Array.isArray(items) ? items.length : null,
-      body: req.body,
-    })
-
+  
     if (!Array.isArray(items)) {
       return res.status(400).json({ message: 'items must be an array' })
     }
 
     const result = await reorderTreeService(userId, items)
-    console.log('[NAV_UPDATE_TREE] db result', result)
+
     res.status(200).json({ message: 'Navigation order updated successfully', result })
   } catch (err) {
     console.error('[NAV_UPDATE_TREE] failed', err)

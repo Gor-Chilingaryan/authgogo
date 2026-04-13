@@ -24,3 +24,19 @@ export const logoutUserRequest = async () => {
   const response = await api.post('/logout')
   return response.data
 }
+
+export const uploadImageRequest = async (formData) => {
+  try {
+    const response = await api.post('/upload-avatar',
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+      }
+    )
+
+    return response.data
+  } catch (error) {
+    console.error('Upload image failed')
+  }
+}

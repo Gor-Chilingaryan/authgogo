@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { getUserInfoRequest, patchUserInfoRequest, logoutUserRequest } from '@features/home-page/services/userInfo'
+import { getUserInfoRequest, patchUserInfoRequest, logoutUserRequest, uploadImageRequest } from '@features/home-page/services/userInfo'
 
 /**
  * Provides state and actions for the `UserInfo` screen.
@@ -19,9 +19,13 @@ export const useUserInfo = () => {
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  const [disableInput, setDisableInput] = useState(true)
-
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const [disableInput, setDisableInput] = useState(true)
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -61,15 +65,6 @@ export const useUserInfo = () => {
   }
 
   /**
-   * Updates selected avatar in local state.
-   * @param {string} avatarUrl - Selected avatar URL.
-   * @returns {void}
-   */
-  const handleAvatarChange = (avatarUrl) => {
-    setUserInfo(prev => ({ ...prev, avatar: avatarUrl }))
-  }
-
-  /**
    * Persists edited user profile values.
    * @returns {Promise<void>}
    */
@@ -101,18 +96,50 @@ export const useUserInfo = () => {
     }
   }
 
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+   
+    if (isModalOpen) {
+      setPreview(null);
+      setFile(null);
+    }
+  };
 
 
+  const handleFileChange = (e) => {
+    const selected = e.target.files[0];
+    setFile(selected);
+    setPreview(URL.createObjectURL(selected));
+  };
+
+  const handleUploadImage = async () => {
+    setIsLoading(true)
+    if (!file) return
+    const formData = new FormData()
+    formData.append('avatar', file)
+    try {
+      const response = await uploadImageRequest(formData)
+      setUserInfo(prev => ({ ...prev, avatar: response.url }))
+      toggleModal()
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return {
     userInfo,
     setUserInfo,
-    isModalOpen,
-    setIsModalOpen,
-    handleAvatarChange,
     error,
+    isModalOpen,
+    isUploading,
+    preview,
     isLoading,
     disableInput,
+    toggleModal,
+    handleFileChange,
+    handleUploadImage,
     handleDesableInput,
     handleChange,
     handleSaveValues,

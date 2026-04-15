@@ -3,8 +3,8 @@ import style from './navigationEdit.module.css';
 import { useNavigate } from 'react-router-dom';
 
 import { useNavigationEdit } from '@features/navigation/hook/useNavigationEdit';
-import { NavigationTree } from '@components/navigation-edit/NavigationTree';
-import InputWithLabel from '@components/input-label/InputWithLabel';
+import { NavigationTree } from '@/components/navigation-edit';
+import InputWithLabel from '@/components/input-label';
 
 import arrowLeft from '@assets/icons/arrow-left.svg';
 import chevronRight from '@assets/icons/chevron-right.svg';

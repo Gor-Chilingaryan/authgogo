@@ -1,28 +1,14 @@
-/**
- * New password hook.
- * Validates and submits password reset form for a known email.
- */
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { newPassword } from '@features/auth/services/auth'
-import { validationRules } from '@components/validation-message/ValidationMessage'
+import { validationRules } from '@/components/validation-message'
 
-
-/**
- * Provides password reset form state and actions.
- * @returns {object} Reset form state and handlers.
- */
 function useNewPassword() {
-  const location = useLocation()
+  const { token } = useParams()
   const navigate = useNavigate()
-  const email = location.state?.email
 
-  useEffect(() => {
-    const isLogged = localStorage.getItem('isLogged') === 'true'
-    if (isLogged) {
-      navigate('/home', { replace: true })
-    }
-  }, [navigate])
+  const [serverError, setServerError] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState({
     password: '',
@@ -34,10 +20,20 @@ function useNewPassword() {
     confirmPassword: null,
   })
 
-  /**
-   * Validates both password fields before submit.
-   * @returns {boolean} True when password and confirmation are valid.
-   */
+
+  useEffect(() => {
+    const isLogged = localStorage.getItem('isLogged') === 'true'
+    if (isLogged) {
+      navigate('/home', { replace: true })
+    }
+  }, [navigate])
+
+  useEffect(() => {
+    if (!token) {
+      navigate('/forgot-password')
+    }
+  }, [token, navigate])
+
   const validateForm = () => {
     const statuses = {
       password: validationRules.password(formData.password) ? 'valid' : 'invalid',
@@ -47,36 +43,16 @@ function useNewPassword() {
     return statuses.password === 'valid' && statuses.confirmPassword === 'valid'
   }
 
-
-
-  useEffect(() => {
-    if (!email) {
-      navigate('/forgot-password')
-    }
-  }, [email, navigate])
-
-
-
   const isFormValid = validationStatus.password === 'valid'
     && validationStatus.confirmPassword === 'valid'
 
-  /**
-   * Updates local password form state.
-   * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event.
-   * @returns {void}
-   */
   const handleChange = e => {
     const { name, value } = e.target
-
     setFormData(prev => ({ ...prev, [name]: value }))
     setValidationStatus(prev => ({ ...prev, [name]: null }))
+    setServerError(null)
   }
 
-  /**
-   * Validates one field on blur.
-   * @param {React.FocusEvent<HTMLInputElement>} e - Blur event.
-   * @returns {void}
-   */
   const handleBlur = e => {
     const { name, value } = e.target
     const isValid = name === 'confirmPassword'
@@ -89,28 +65,25 @@ function useNewPassword() {
     }))
   }
 
-  /**
-   * Persists new password and signs in user on success.
-   * @param {React.FormEvent<HTMLFormElement>} e - Form submit event.
-   * @returns {Promise<void>}
-   */
   const handleSavePassword = async e => {
     e.preventDefault()
 
     const isValid = validateForm()
-    if (!isValid || !email) return
+    if (!isValid || !token) return
 
-
-
+    setLoading(true)
     try {
-      const data = await newPassword(email, formData.password)
+
+      await newPassword(token, formData.password)
+
 
       localStorage.setItem('isLogged', 'true')
       navigate('/home')
     } catch (err) {
-      throw new Error(err.message || 'An error occurred')
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
-
   }
 
   return {
@@ -120,8 +93,8 @@ function useNewPassword() {
     handleBlur,
     handleChange,
     handleSavePassword,
-
+    loading   
   }
 }
 
-export { useNewPassword}
+export { useNewPassword }

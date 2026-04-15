@@ -8,7 +8,7 @@ import mongoose from 'mongoose'
 const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
-    default: '/user-images/default_user.png'
+    default: '/default_user.png'
   },
   firstName: {
     type: String,
@@ -50,6 +50,14 @@ const userSchema = new mongoose.Schema({
       validator: (v) => /^(?=.*\d)(?=.*[!@#$%^&*])\S+$/.test(v),
       message: 'Password must contain at least one number, one special character (!@#$%^&*) and no spaces.'
     }
+  },
+  resetPasswordToken: {
+    type: String,
+    default: null
+  },
+  resetPasswordTokenExpires: {
+    type: Date,
+    default: null
   }
 })
 

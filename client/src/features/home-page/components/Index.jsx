@@ -7,9 +7,9 @@ import { Link } from 'react-router-dom';
 import style from './userInfo.module.css';
 
 import { useUserInfo } from '@features/home-page/hook/useUserInfo';
-import InputWithLabel from '@components/input-label/InputWithLabel';
+import InputWithLabel from '@/components/input-label';
 import cameraPlusIcon from '@assets/icons/camera-plus.svg';
-import { UserAvatarModal } from '@/components/user-avatar-modal/userAvatarModal';
+import { UserAvatarModal } from '@/components/user-avatar-modal';
 
 /**
  * Renders authenticated user profile form and controls.

@@ -1,17 +1,11 @@
-/**
- * Login form hook.
- * Stores login form state, validates credentials, and handles sign-in flow.
- */
+
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { validationRules } from '@components/validation-message/ValidationMessage'
 import { loginUser } from '@features/auth/services/auth'
+import { validationRules } from '@/components/validation-message'
 
 
-/**
- * Provides state and handlers for login UI.
- * @returns {object} Login form state and event handlers.
- */
+
 const useLoginForm = () => {
 	const navigate = useNavigate()
 
@@ -32,10 +26,7 @@ const useLoginForm = () => {
 	const isFormValid =
 		validationStatus.email === 'valid' && validationStatus.password === 'valid'
 
-	/**
-	 * Validates all login fields before submit.
-	 * @returns {boolean} True when form data is valid.
-	 */
+
 	const validateForm = () => {
 		const emailValid = validationRules.email(formData.email) ? 'valid' : 'invalid'
 		const passwordValid = validationRules.password(formData.password) ? 'valid' : 'invalid'
@@ -48,11 +39,6 @@ const useLoginForm = () => {
 	}
 
 
-	/**
-	 * Validates one field on blur.
-	 * @param {React.FocusEvent<HTMLInputElement>} e - Blur event.
-	 * @returns {void}
-	 */
 	const handleBlur = e => {
 		const { name, value } = e.target
 		if (validationRules[name]) {
@@ -64,11 +50,7 @@ const useLoginForm = () => {
 		}
 	}
 
-	/**
-	 * Submits login request and redirects on success.
-	 * @param {React.FormEvent<HTMLFormElement>} e - Form submit event.
-	 * @returns {Promise<void>}
-	 */
+
 	const handleSignIn = async e => {
 		e.preventDefault()
 
@@ -87,11 +69,6 @@ const useLoginForm = () => {
 		}
 	}
 
-	/**
-	 * Updates form state as user types.
-	 * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event.
-	 * @returns {void}
-	 */
 	const handleChange = e => {
 		const { name, value } = e.target
 		setFormData({ ...formData, [name]: value })
@@ -101,13 +78,43 @@ const useLoginForm = () => {
 		})
 	}
 
+	const errors = [
+		{
+			condition: validationStatus.email === 'invalid',
+			message: 'Please provide a valid email address',
+		},
+		{
+			condition: validationStatus.password === 'invalid',
+			message: 'Password must be 8+ chars, include a number and symbol (!@#$)',
+		},
+	];
+
+	const activeError = errors.find((item) => item.condition);
+
+	const inputs = [
+		{
+			type: 'email',
+			name: 'email',
+			labelText: 'Email Address',
+			value: formData.email,
+		},
+		{
+			type: 'password',
+			name: 'password',
+			labelText: 'Password',
+			value: formData.password,
+		},
+
+	];
+
 	return {
 		formData,
-		validationStatus,
 		isFormValid,
 		handleBlur,
 		handleSignIn,
 		handleChange,
+		activeError,
+		inputs
 	}
 }
 export { useLoginForm }

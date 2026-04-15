@@ -1,7 +1,3 @@
-/**
- * Validation rules and message component.
- * Centralizes field validators and renders inline validation feedback.
- */
 import React from 'react';
 import style from './validationMessage.module.css';
 
@@ -16,11 +12,7 @@ export const validationRules = {
   confirmPassword: (value, password) => value === password && value.length >= 8,
 };
 
-/**
- * Renders children only when field validation status is invalid.
- * @param {{status: string|null, validationMessageStyle?: string, validationMessageTextStyle?: string, children: React.ReactNode}} props - Component props.
- * @returns {JSX.Element|null} Validation message or null.
- */
+
 function ValidationMessages({
   status,
   validationMessageStyle = '',

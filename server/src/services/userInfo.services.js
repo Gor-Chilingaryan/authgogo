@@ -29,7 +29,6 @@ export const getUserInfoService = async (userId) => {
       json: userData
     }
   } catch (err) {
-    // Cast errors, connectivity issues, or unexpected Mongoose failures — surfaced as 500 for the controller to forward.
     return {
       status: 500,
       json: { message: err.message }

@@ -1,16 +1,10 @@
-/**
- * User profile hook.
- * Manages profile fetch/update flow, edit mode state, avatar modal, and logout.
- */
+
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { getUserInfoRequest, patchUserInfoRequest, logoutUserRequest, uploadImageRequest } from '@features/home-page/services/userInfo'
 
-/**
- * Provides state and actions for the `UserInfo` screen.
- * @returns {object} Profile state and handlers.
- */
+
 export const useUserInfo = () => {
   const navigate = useNavigate()
 
@@ -42,10 +36,7 @@ export const useUserInfo = () => {
     fetchUserInfo()
   }, [])
 
-  /**
-   * Toggles edit mode and resets values when leaving edit mode.
-   * @returns {Promise<void>}
-   */
+
   const handleDesableInput = async () => {
     setDisableInput(!disableInput)
     if (!disableInput) {
@@ -54,21 +45,15 @@ export const useUserInfo = () => {
     }
   }
 
-  /**
-   * Updates profile form field value in local state.
-   * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event.
-   * @returns {void}
-   */
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setUserInfo(prev => ({ ...prev, [name]: value }))
   }
 
-  /**
-   * Persists edited user profile values.
-   * @returns {Promise<void>}
-   */
+
   const handleSaveValues = async () => {
+
     try {
       setIsLoading(true)
       const data = await patchUserInfoRequest(userInfo)
@@ -76,15 +61,13 @@ export const useUserInfo = () => {
       setDisableInput(true)
     } catch (error) {
       setError(error.message)
+      console.log(error)
     } finally {
       setIsLoading(false)
     }
   }
 
-  /**
-   * Logs user out on server and clears local auth flag.
-   * @returns {Promise<void>}
-   */
+
   const handleLogout = async () => {
     try {
       await logoutUserRequest()
@@ -98,7 +81,7 @@ export const useUserInfo = () => {
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
-   
+
     if (isModalOpen) {
       setPreview(null);
       setFile(null);

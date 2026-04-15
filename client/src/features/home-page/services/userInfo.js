@@ -11,6 +11,7 @@ export const getUserInfoRequest = async () => {
 }
 
 export const patchUserInfoRequest = async (userBody) => {
+
   try {
     const response = await api.patch('/user-info/changes', userBody)
 
@@ -19,6 +20,7 @@ export const patchUserInfoRequest = async (userBody) => {
     throw new Error('Update user info failed')
   }
 }
+
 
 export const logoutUserRequest = async () => {
   const response = await api.post('/logout')

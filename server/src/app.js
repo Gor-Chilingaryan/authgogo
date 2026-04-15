@@ -19,9 +19,9 @@ const app = express()
 
 // 1. Убедись, что CORS стоит ПЕРВЫМ среди middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // Пишем напрямую для теста
+  origin: process.env.CLIENT_URL, // Пишем напрямую для теста
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   optionsSuccessStatus: 200
 }))

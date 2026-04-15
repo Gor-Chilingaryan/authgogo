@@ -31,9 +31,9 @@ export const forgotPassword = async (email) => {
 
 }
 
-export const newPassword = async (email, password) => {
+export const newPassword = async (token, password) => {
   try {
-    const response = await api.patch('/new-password', { email, password })
+    const response = await api.post(`/reset-password/${token}`, {  password })
 
     return response.data
   } catch (error) {

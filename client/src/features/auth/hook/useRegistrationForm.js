@@ -1,18 +1,13 @@
-/**
- * Registration form hook.
- * Manages sign-up form state, validation, and account creation submission.
- */
-import { useEffect, useState } from 'react'
+
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { validationRules } from '@components/validation-message/ValidationMessage'
+import { validationRules } from '@/components/validation-message'
 import { registerUser } from '@features/auth/services/auth'
 
-/**
- * Provides sign-up state and event handlers.
- * @returns {object} Registration form data and actions.
- */
+
 function useRegistrationForm() {
   const navigate = useNavigate()
+  const [serverError, setServerError] = useState(null)
 
   useEffect(() => {
     const isLogged = localStorage.getItem('isLogged') === 'true'
@@ -37,13 +32,14 @@ function useRegistrationForm() {
     confirmPassword: null,
   })
 
-  const isFormValid = Object.values(validationStatus).every(status => status === 'valid')
+  const isFormValid = useMemo(() => Object
+    .values(validationStatus)
+    .every(status => status === 'valid'),
+    [validationStatus]
+  )
 
-  /**
-   * Validates every registration field.
-   * @returns {boolean} True when all fields are valid.
-   */
-  const validateForm = () => {
+
+  const validateForm = useCallback(() => {
     const statuses = {
       firstName: validationRules.firstName(formData.firstName) ? 'valid' : 'invalid',
       lastName: validationRules.lastName(formData.lastName) ? 'valid' : 'invalid',
@@ -54,18 +50,32 @@ function useRegistrationForm() {
     setValidationStatus(statuses)
 
     return Object.values(statuses).every(status => status === 'valid')
+  }, [formData])
+
+  const handleChange = e => {
+    const { name, value } = e.target
+    const updateFormData = { ...formData, [name]: value }
+    setFormData(updateFormData)
+
+    setServerError(null)
+
+    setValidationStatus(prev => {
+      const newStatus = { ...prev, [name]: null }
+
+      if (name === 'password' && formData.confirmPassword) {
+        const isMatch = validationRules.confirmPassword(formData.confirmPassword, value)
+        newStatus.confirmPassword = isMatch ? 'valid' : 'invalid'
+      }
+
+      return newStatus
+    })
   }
 
-  /**
-   * Validates a single field on blur.
-   * @param {React.FocusEvent<HTMLInputElement>} e - Blur event.
-   * @returns {void}
-   */
   const handleBlur = e => {
     const { name, value } = e.target
+    if (!value) return
 
     let isValid = false
-
     if (name === 'confirmPassword') {
       isValid = validationRules.confirmPassword(value, formData.password)
     } else if (validationRules[name]) {
@@ -78,17 +88,10 @@ function useRegistrationForm() {
     }))
   }
 
-  /**
-   * Submits registration data and redirects on success.
-   * @param {React.FormEvent<HTMLFormElement>} e - Form submit event.
-   * @returns {Promise<void>}
-   */
+
   const handleRegistration = async e => {
     e.preventDefault()
-
-    const isValid = validateForm()
-
-    if (!isValid) return
+    if (!validateForm()) return
 
     try {
       const { confirmPassword, ...registerData } = formData
@@ -97,35 +100,92 @@ function useRegistrationForm() {
 
       navigate('/home')
     } catch (err) {
-      throw new Error(err.message || 'An error occurred')
+      setServerError(err.message || 'An error occurred')
     }
   }
 
-  /**
-   * Updates form state and resets dependent validation state.
-   * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event.
-   * @returns {void}
-   */
-  const handleChange = e => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+  useEffect(() => {
+    const timer = setTimeout(() => {
 
-    setValidationStatus(prev => {
-      const newStatus = { ...prev, [name]: null }
+      const hasValues = Object.values(formData).some(value => value.length > 0);
+      const hasNoStatus = Object.values(validationStatus).every(status => status === null);
 
-      if (name === 'password') {
-        newStatus.confirmPassword = null
+      if (hasValues && hasNoStatus) {
+        validateForm();
       }
+    }, 500);
 
-      return newStatus
-    })
+    return () => clearTimeout(timer);
+  }, [formData, validateForm, validationStatus]);
 
 
-  }
+  const inputs = [
+    {
+      type: 'text',
+      name: 'firstName',
+      labelText: 'First Name',
+      value: formData.firstName,
+    },
+    {
+      type: 'text',
+      name: 'lastName',
+      labelText: 'Last Name',
+      value: formData.lastName,
+    },
+
+    {
+      type: 'email',
+      name: 'email',
+      labelText: 'Email',
+      value: formData.email,
+    },
+    {
+      type: 'password',
+      name: 'password',
+      labelText: 'Password',
+      value: formData.password,
+    },
+
+    {
+      type: 'password',
+      name: 'confirmPassword',
+      labelText: 'Confirm Password',
+      value: formData.confirmPassword,
+    },
+  ];
+
+  const errors = [
+    {
+      condition: validationStatus.firstName === 'invalid',
+      message: 'First Name is required',
+    },
+    {
+      condition: validationStatus.lastName === 'invalid',
+      message: 'Last Name is required',
+    },
+    {
+      condition: validationStatus.email === 'invalid',
+      message: 'Please provide a valid email address',
+    },
+    {
+      condition: validationStatus.password === 'invalid',
+      message: 'Password must be 8+ chars, include a number and symbol (!@#$)',
+    },
+    {
+      condition: validationStatus.confirmPassword === 'invalid',
+      message: 'Passwords do not match',
+    },
+    {
+      condition: serverError,
+      message: 'User already exists. Please try again with a different email address.',
+    },
+  ];
+  const activeError = errors.find((item) => item.condition);
+
 
   return {
-    formData,
-    validationStatus,
+    inputs,
+    activeError,
     isFormValid,
     handleBlur,
     handleRegistration,

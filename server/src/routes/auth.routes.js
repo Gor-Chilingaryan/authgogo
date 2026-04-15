@@ -10,9 +10,12 @@ const router = express.Router()
 
 router.post('/registration', registerController)
 router.post('/login', loginUserController)
-router.post('/forgot-password', forgotPasswordController)
-router.patch('/new-password', newPasswordController)
-router.post('/refresh', refreshTokenController)
 router.post('/logout', logoutController)
+
+router.post('/forgot-password', forgotPasswordController)
+router.post('/reset-password/:token', newPasswordController)
+// router.patch('/new-password', newPasswordController)
+router.post('/refresh', refreshTokenController)
+
 
 export default router

@@ -1,20 +1,14 @@
-/**
- * New password page component.
- * Lets user set and confirm a new password after email verification step.
- */
 import React from 'react';
 import style from './newPassword.module.css';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
-import InputWithLabel from '@components/input-label/InputWithLabel';
+import InputWithLabel from '@/components/input-label';
 import { useNewPassword } from '@features/auth/hook/useNewPassword';
-import ValidationMessages from '@components/validation-message/ValidationMessage';
+import ValidationMessages from '@/components/validation-message';
 
-/**
- * Displays password reset form UI.
- * @returns {JSX.Element} New-password screen.
- */
+
 function NewPassword() {
+  const { token } = useParams();
   const {
     formData,
     validationStatus,
@@ -22,7 +16,22 @@ function NewPassword() {
     handleBlur,
     handleChange,
     handleSavePassword,
-  } = useNewPassword();
+    loading,
+  } = useNewPassword(token);
+
+  const errors = [
+    {
+      condition: validationStatus.password === 'invalid',
+      message: 'Password must be 8+ chars, include a number and symbol (!@#$)',
+    },
+    {
+      condition: validationStatus.confirmPassword === 'invalid',
+      message: 'Passwords do not match',
+    },
+  ];
+
+  const activeError = errors.find((item) => item.condition);
+
   return (
     <>
       <div className={style.reset_password_content}>
@@ -40,9 +49,6 @@ function NewPassword() {
             changeValue={handleChange}
             onBlur={handleBlur}
           />
-          <ValidationMessages status={validationStatus.password}>
-            Password must be 8+ chars, include a number and symbol (!@#$)
-          </ValidationMessages>
 
           <InputWithLabel
             inputStyle={style.input}
@@ -53,18 +59,24 @@ function NewPassword() {
             changeValue={handleChange}
             onBlur={handleBlur}
           />
-          <ValidationMessages status={validationStatus.confirmPassword}>
-            Passwords do not match
-          </ValidationMessages>
+          <div>
+            {activeError && (
+              <ValidationMessages status={'invalid'}>
+                {activeError.message}
+              </ValidationMessages>
+            )}
+          </div>
 
           <div className={style.navigate_items}>
+            
             <button
               type='submit'
               className={style.button}
               disabled={!isFormValid}
             >
-              Save
+              {loading ? 'Saving...' : 'Save'}
             </button>
+
             <Link to='/' className={style.sign_in_link}>
               Sign In
             </Link>

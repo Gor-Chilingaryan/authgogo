@@ -1,24 +1,19 @@
-/**
- * Module: message.routes.js
- * Description: Express router for messenger features (conversations, messages, read receipts, user search).
- * Role in request lifecycle: HTTP boundary — all routes are protected by `authMiddleware` before message controllers run.
- */
 import express from 'express'
 import authMiddleware from '../middleware/auth.js'
 import {
-  getConversationsController,
-  getMessagesController,
-  sendMessageController,
-  markAsReadController,
-  searchUsersController,
+  getConversations,
+  getMessages,
+  sendMessage,
+  markAsRead,
+  searchUsers,
 } from '../controllers/message.controller.js'
 
 const router = express.Router()
 
-router.get('/messenger/conversations', authMiddleware, getConversationsController)
-router.get('/messenger/messages/:partnerId', authMiddleware, getMessagesController)
-router.post('/messenger/messages/:partnerId', authMiddleware, sendMessageController)
-router.patch('/messenger/messages/:partnerId/read', authMiddleware, markAsReadController)
-router.get('/messenger/users/search', authMiddleware, searchUsersController)
+router.get('/messenger/conversations',  authMiddleware, getConversations)
+router.get('/messenger/messages/:partnerId', authMiddleware, getMessages)
+router.post('/messenger/messages/:partnerId', authMiddleware, sendMessage)
+router.patch('/messenger/messages/:partnerId/read', authMiddleware, markAsRead)
+router.get('/messenger/users/search', authMiddleware, searchUsers)
 
 export default router

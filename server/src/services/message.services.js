@@ -1,21 +1,10 @@
-/**
- * Module: message.services.js
- * Description: Messenger domain logic — conversation aggregation, thread fetch, send, read receipts, and user search.
- * Role in request lifecycle: Service layer — all functions take explicit user ids from controllers (`req.user._id`, params, query).
- */
+
 import mongoose from 'mongoose'
 import messageModel from '../models/messageSchema.js'
 import userModel from '../models/userSchema.js'
 
-/**
- * Builds conversation list with last message preview and unread counts for the sidebar.
- * @param {string|import('mongoose').Types.ObjectId} userId - Authenticated user id.
- * @returns {Promise<{status: number, json: object|Array}>} `200` and array of `{ user, lastMessage, unreadCount }`.
- * @throws {void} Errors return `{ status: 500, json }` instead of throwing.
- */
 export const getConversationsService = async (userId) => {
   try {
-    // $or: user can appear as sender or receiver — we need every message row touching this user to discover partners.
     const messages = await messageModel
       .find({
         $or: [{ sender: userId }, { receiver: userId }],
@@ -41,7 +30,6 @@ export const getConversationsService = async (userId) => {
       return { status: 200, json: [] }
     }
 
-    // $in: load all partner user docs in one query instead of N separate finds.
     const partners = await userModel
       .find({ _id: { $in: [...partnerIds] } })
       .select('firstName lastName avatar email')
@@ -52,7 +40,6 @@ export const getConversationsService = async (userId) => {
         $match: {
           receiver: userId,
           read: false,
-          // $in: restrict unread aggregation to known partners only (avoids counting stray senders).
           sender: { $in: partnerObjectIds },
         },
       },
@@ -77,31 +64,22 @@ export const getConversationsService = async (userId) => {
 
     return { status: 200, json: conversations }
   } catch (err) {
-    // Aggregation/find failures — 500 Internal Server Error for the API consumer.
     console.error(err)
     return { status: 500, json: { message: err.message } }
   }
 }
 
-/**
- * Loads full two-party thread sorted oldest-first for chat rendering.
- * @param {string|import('mongoose').Types.ObjectId} userId - Current user.
- * @param {string|import('mongoose').Types.ObjectId} partnerId - Other participant from `req.params.partnerId`.
- * @returns {Promise<{status: number, json: object|Array}>} `200` + populated messages.
- * @throws {void}
- */
 export const getMessagesService = async (userId, partnerId) => {
   try {
     const messages = await messageModel
       .find({
-        // Either direction: A→B or B→A must match (bidirectional conversation thread).
+
         $or: [
           { sender: userId, receiver: partnerId },
           { sender: partnerId, receiver: userId },
         ],
       })
       .sort({ createdAt: 1 })
-      // populate: replace ObjectId refs with selected user fields for display names/avatars in the UI.
       .populate('sender', 'firstName lastName avatar')
       .populate('receiver', 'firstName lastName avatar')
 
@@ -112,14 +90,6 @@ export const getMessagesService = async (userId, partnerId) => {
   }
 }
 
-/**
- * Validates content and receiver, persists message, returns populated document for immediate UI append.
- * @param {string|import('mongoose').Types.ObjectId} senderId - `req.user._id`.
- * @param {string|import('mongoose').Types.ObjectId} receiverId - Route param partner id.
- * @param {string} content - From `req.body.content`.
- * @returns {Promise<{status: number, json: object}>} `201` + message, `400` empty content, `404` unknown receiver, `500` errors.
- * @throws {void}
- */
 export const sendMessageService = async (senderId, receiverId, content) => {
   try {
     if (!content?.trim()) {
@@ -149,33 +119,41 @@ export const sendMessageService = async (senderId, receiverId, content) => {
   }
 }
 
-/**
- * Marks all unread inbound messages from `partnerId` as read for `userId` (read receipt / badge clearing).
- * @param {string|import('mongoose').Types.ObjectId} userId - Authenticated user (the receiver side of unread rows).
- * @param {string|import('mongoose').Types.ObjectId} partnerId - Counterparty whose sent messages become `read: true`.
- * @returns {Promise<{status: number, json: object}>} `200` confirmation or `500` on failure.
- * @throws {void}
- */
 export const markAsReadService = async (userId, partnerId) => {
   try {
-    await messageModel.updateMany(
-      { sender: partnerId, receiver: userId, read: false },
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return { status: 400, json: { message: 'Invalid user id' } }
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(partnerId)) {
+      return { status: 400, json: { message: 'Invalid partnerId' } }
+    }
+
+    const result = await messageModel.updateMany(
+      {
+        sender: new mongoose.Types.ObjectId(partnerId),
+        receiver: new mongoose.Types.ObjectId(userId),
+        read: false,
+      },
       { $set: { read: true } }
     )
-    return { status: 200, json: { message: 'Messages marked as read' } }
+    const markedCount =
+      typeof result?.modifiedCount === 'number'
+        ? result.modifiedCount
+        : typeof result?.nModified === 'number'
+          ? result.nModified
+          : 0
+
+    return {
+      status: 200,
+      json: { message: 'Messages marked as read', markedCount },
+    }
   } catch (err) {
     console.error(err)
     return { status: 500, json: { message: err.message } }
   }
 }
 
-/**
- * Case-insensitive partial match on first name, last name, or email; excludes the current user from results.
- * @param {string} query - From `req.query.q`.
- * @param {string|import('mongoose').Types.ObjectId} currentUserId - Exclude self from matches.
- * @returns {Promise<{status: number, json: object|Array}>} `200` + up to 10 users.
- * @throws {void}
- */
 export const searchUsersService = async (query, currentUserId) => {
   try {
     if (!query?.trim()) {
@@ -188,7 +166,6 @@ export const searchUsersService = async (query, currentUserId) => {
     const users = await userModel
       .find({
         _id: { $ne: currentUserId },
-        // $or: match any of the searchable fields with the same regex.
         $or: [{ firstName: regex }, { lastName: regex }, { email: regex }],
       })
       .select('firstName lastName avatar email')

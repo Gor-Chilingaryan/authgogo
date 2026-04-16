@@ -1,17 +1,10 @@
-/**
- * Messenger page component.
- * Renders conversation list, active chat panel, and message composer UI.
- */
+
 import React from 'react';
 import style from './messenger.module.css';
 import { useMessenger } from '@features/conversations/hook/useMessenger';
 import { Avatar } from '@/components/user-avatar-modal';
 import loupeIcon from '@assets/icons/loupe.svg';
 
-/**
- * Displays the full messenger interface using `useMessenger`.
- * @returns {JSX.Element} Messenger screen layout.
- */
 function Messenger() {
   const {
     conversations,
@@ -39,7 +32,6 @@ function Messenger() {
   return (
     <div className={style.page}>
       <main className={style.main}>
-        {/* ── Left sidebar ── */}
         <aside
           className={`${style.sidebar} ${activePartner ? style.hiddenOnMobile : ''}`}
         >
@@ -47,7 +39,6 @@ function Messenger() {
             <h2 className={style.sidebarTitle}>Messages</h2>
           </div>
 
-          {/* Search to start a new conversation */}
           <div className={style.searchWrapper}>
             <input
               type='text'
@@ -61,7 +52,6 @@ function Messenger() {
             </button>
           </div>
 
-          {/* Search results */}
           {searchQuery && (
             <div className={style.searchResults}>
               {isSearching && <p className={style.searchHint}>Searching...</p>}
@@ -83,7 +73,6 @@ function Messenger() {
             </div>
           )}
 
-          {/* Conversation list */}
           <div className={style.conversationList}>
             {isLoadingConversations && <span className={style.loader} />}
             {!isLoadingConversations && conversations.length === 0 && (
@@ -128,7 +117,6 @@ function Messenger() {
           </div>
         </aside>
 
-        {/* ── Chat panel ── */}
         <section
           className={`${style.chatPanel} ${!activePartner ? style.hiddenOnMobile : ''}`}
         >
@@ -141,7 +129,6 @@ function Messenger() {
             </div>
           ) : (
             <>
-              {/* Chat header */}
               <div className={style.chatHeader}>
                 <button className={style.backButton} onClick={closeChat}>
                   ←
@@ -154,7 +141,6 @@ function Messenger() {
                 </div>
               </div>
 
-              {/* Messages */}
               <div className={style.messagesArea}>
                 {isLoadingMessages && <span className={style.loader} />}
 
@@ -189,10 +175,8 @@ function Messenger() {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Error toast */}
               {error && <div className={style.errorToast}>{error}</div>}
 
-              {/* Input area */}
               <div className={style.inputArea}>
                 <div className={style.inputWrapper}>
                   <textarea

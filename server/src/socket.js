@@ -10,7 +10,6 @@ export const initSocket = (httpServer) => {
     }
   })
 
-
   io.on('connection', (socket) => {
     const rawUserId =
       socket.handshake?.query?.userId ?? socket.handshake?.auth?.userId
@@ -19,9 +18,9 @@ export const initSocket = (httpServer) => {
     if (userId && userId !== 'undefined') {
       socket.join(String(userId))
     }
-
-  })  
+  })
 }
+
 export const getIo = () => {
   if (!io) {
     throw new Error('Socket.io not initialized')

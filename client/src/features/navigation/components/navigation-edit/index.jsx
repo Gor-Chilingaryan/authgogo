@@ -27,7 +27,6 @@ function NavigationEdit() {
 
   return (
     <div className={style.navigationEdit_container}>
-      {/* ── LEFT: form ── */}
       <div className={style.navigationEdit_creating}>
         <button
           onClick={() => navigate('/home')}
@@ -64,9 +63,7 @@ function NavigationEdit() {
         </button>
       </div>
 
-      {/* ── RIGHT: list ── */}
       <div className={style.navigationEdit_list}>
-        {/* Static items */}
         <div className={style.navigationEdit_list_item}>
           <span className={style.navigationEdit_list_item_name}>Home</span>
         </div>
@@ -74,7 +71,6 @@ function NavigationEdit() {
           <span className={style.navigationEdit_list_item_name}>Messenger</span>
         </div>
 
-        {/* Sortable tree */}
         <NavigationTree
           items={items}
           isLoading={isLoading}

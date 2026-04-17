@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 
-/* 1. Reset all margins and box-sizing */
+
 *,
 *::before,
 *::after {
@@ -9,7 +9,7 @@
   box-sizing: border-box;
 }
 
-/* 2. Improve font smoothness and line height */
+
 html {
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
@@ -17,13 +17,13 @@ html {
   tab-size: 4;
 }
 
-/* 3. Remove default margins from lists, if they are not needed */
+
 ol,
 ul {
   list-style: none;
 }
 
-/* 4. Make pictures obedient (so they don't stick out of the edges) */
+
 img,
 picture,
 video,
@@ -33,7 +33,7 @@ svg {
   max-width: 100%;
 }
 
-/* 5. Convenient font settings for forms */
+
 input,
 button,
 textarea,
@@ -41,13 +41,13 @@ select {
   font: inherit;
 }
 
-/* 6. Remove default underline from links */
+
 a {
   text-decoration: none;
   color: inherit;
 }
 
-/* 7. Basic body settings */
+
 body {
   min-height: 100vh;
   text-rendering: optimizeSpeed;
@@ -56,9 +56,3 @@ body {
   color: #333333;
 }
 
-/* 8. To make the footer always at the bottom, if you are using Flex on #root */
-/* #root {
-	display: flex;
-	flex-direction: column;
-	min-height: 100vh; 
- } */

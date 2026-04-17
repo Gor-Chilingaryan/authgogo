@@ -1,7 +1,3 @@
-/**
- * Builds a tree from a flat nav list ordered by `position` with `depth`.
- * Matches backend model: no `childMenu` array on the wire.
- */
 export function flatNavToTree(flatItems) {
   if (!Array.isArray(flatItems) || flatItems.length === 0) return []
 

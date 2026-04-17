@@ -25,15 +25,7 @@ export const getUserInfoService = async (userId) => {
   }
 }
 
-/**
- * Applies `userBody` as an update document with validators; returns the post-update document.
- * @param {string|import('mongoose').Types.ObjectId} userId - Profile owner id.
- * @param {object} userBody - Partial fields from `req.body` (must not include trusted ids from client without allowlisting in production).
- * @returns {Promise<object>} Updated Mongoose document.
- * @throws {Error} `'User not found'` when no document matches `userId` after update.
- * @throws {Error} Mongoose validation errors propagate to the controller as 500.
- */
-export const patchUserInfoService = async (userId, userBody) => {
+export const updatehUserInfoService = async (userId, userBody) => {
   const user = await userModel.findByIdAndUpdate(userId, userBody, {
     returnDocument: 'after',
     runValidators: true,

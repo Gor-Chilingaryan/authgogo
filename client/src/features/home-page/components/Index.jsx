@@ -1,7 +1,4 @@
-/**
- * User profile page component.
- * Displays profile details, edit controls, avatar selection, and logout action.
- */
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import style from './userInfo.module.css';
@@ -11,13 +8,11 @@ import InputWithLabel from '@/components/input-label';
 import cameraPlusIcon from '@assets/icons/camera-plus.svg';
 import { UserAvatarModal } from '@/components/user-avatar-modal';
 
-/**
- * Renders authenticated user profile form and controls.
- * @returns {JSX.Element|null} Profile UI, loading/error state, or null.
- */
+
 function UserInfo() {
   const {
     userInfo,
+    userInfoData,
     error,
     isModalOpen,
     isLoading,
@@ -26,7 +21,6 @@ function UserInfo() {
     handleFileChange,
     handleUploadImage,
     toggleModal,
-    isUploading,
     disableInput,
     handleChange,
     handleSaveValues,
@@ -45,37 +39,7 @@ function UserInfo() {
 
   if (!userInfo) return null;
 
-  const userInfoData = [
-    {
-      id: 'firstName',
-      name: 'firstName',
-      type: 'text',
-      label: 'First Name',
-      value: userInfo.firstName,
-    },
-    {
-      id: 'lastName',
-      name: 'lastName',
-      type: 'text',
-      label: 'Last Name',
-      value: userInfo.lastName,
-    },
-    {
-      id: 'email',
-      name: 'email',
-      type: 'email',
-      label: 'Email',
-      value: userInfo.email,
-    },
-    {
-      id: 'phone',
-      name: 'phone',
-      type: 'number',
-      label: 'Phone',
-      placeholder: 'Enter your phone number',
-      value: userInfo.phone,
-    },
-  ];
+
 
   return (
     <div className={style.userInfo_container}>

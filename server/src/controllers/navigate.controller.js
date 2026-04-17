@@ -1,7 +1,3 @@
-/**
- * Module: navigate.controller.js
- * Description: HTTP handlers for user-owned navigation menus.
- */
 import {
   getNavItemsService,
   createNavItemService,

@@ -110,8 +110,40 @@ export const useUserInfo = () => {
       setIsLoading(false)
     }
   }
+    const userInfoData = [
+    {
+      id: 'firstName',
+      name: 'firstName',
+      type: 'text',
+      label: 'First Name',
+      value: userInfo.firstName,
+    },
+    {
+      id: 'lastName',
+      name: 'lastName',
+      type: 'text',
+      label: 'Last Name',
+      value: userInfo.lastName,
+    },
+    {
+      id: 'email',
+      name: 'email',
+      type: 'email',
+      label: 'Email',
+      value: userInfo.email,
+    },
+    {
+      id: 'phone',
+      name: 'phone',
+      type: 'number',
+      label: 'Phone',
+      placeholder: 'Enter your phone number',
+      value: userInfo.phone,
+    },
+  ];
 
   return {
+    userInfoData,
     userInfo,
     setUserInfo,
     error,

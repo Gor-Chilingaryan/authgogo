@@ -1,4 +1,3 @@
-
 import express from 'express'
 import cors from 'cors'
 import userRouter from './routes/auth.routes.js'
@@ -8,7 +7,6 @@ import messageRouter from './routes/message.routes.js'
 import cookieParser from 'cookie-parser'
 import uploadRouter from './routes/uploud.routes.js'
 const app = express()
-
 
 app.use(cors({
   origin: process.env.CLIENT_URL,
@@ -21,7 +19,6 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 
-
 app.use('/api/users', uploadRouter)
 
 app.use(userRouter)
@@ -30,9 +27,8 @@ app.use(userInfoRouter)
 app.use(messageRouter)
 app.use(uploadRouter)
 
-
-app.get('/', (req, res) => {
-  res.send('Hello World')
+app.get('/health', (_, res) => {
+  res.status(200).json({ message: 'Server is running' })
 })
 
 export default app

@@ -1,7 +1,4 @@
-/**
- * Registration page component.
- * Renders sign-up form with field-level validation messages.
- */
+
 import React from 'react';
 import style from './registration.module.css';
 import { Link } from 'react-router-dom';
@@ -18,8 +15,6 @@ function Registration() {
     handleRegistration,
     handleChange,
   } = useRegistrationForm();
-
-  
 
   return (
     <>

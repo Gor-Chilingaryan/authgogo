@@ -2,13 +2,13 @@ import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from '@/components/hoc';
 import { Main } from '@/layout/Main';
-import { Login } from '@/features/auth/components/login/Index';
-import { Registration } from '@/features/auth/components/registration/Index';
-import { ForgotPassword } from '@/features/auth/components/forgot-password/Index';
-import { NewPassword } from '@/features/auth/components/new-password/Index';
+import { Login } from '@/features/auth/components/login';
+import { Registration } from '@/features/auth/components/registration';
+import { ForgotPassword } from '@/features/auth/components/forgot-password';
+import { NewPassword } from '@/features/auth/components/new-password';
 import { NavigationEdit } from '@/features/navigation/components/navigation-edit';
 import { Messenger } from '@/features/conversations/components';
-import { UserInfo } from '@/features/home-page/components/Index';
+import { UserInfo } from '@/features/home-page/components';
 
 export const router = createBrowserRouter([
   { path: '/login', element: <Login /> },

@@ -7,6 +7,7 @@ function Main() {
     <div>
       <header>
         <Navigation />
+        
       </header>
       <main>
         <Outlet />

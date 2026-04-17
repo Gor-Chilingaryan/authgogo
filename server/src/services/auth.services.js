@@ -5,7 +5,6 @@ import crypto from 'crypto';
 import userModel from '../models/userSchema.js'
 import { generateTokens } from '../utils/createToken.js'
 
-// Создаем функцию для получения транспорта, чтобы env точно были подгружены
 const getTransporter = () => {
   return nodemailer.createTransport({
     service: 'gmail',
@@ -123,8 +122,9 @@ export const forgotPasswordService = async (email) => {
   };
 
   try {
-    const transporter = getTransporter(); // Вызываем создание здесь
-    const info = await transporter.sendMail(mailOptions);
+    const transporter = getTransporter();
+    await transporter.sendMail(mailOptions);
+
     return { message: 'Password reset email sent' }
   } catch (err) {
 
@@ -153,7 +153,7 @@ export const newPasswordService = async (token, password) => {
   user.resetPasswordToken = null;
   user.resetPasswordTokenExpires = null;
 
-  const savedUser = await user.save();
+  await user.save();
 
   return { message: 'Success', user: { id: user._id, email: user.email } };
 }
@@ -170,7 +170,6 @@ export const refreshServices = async (refreshToken) => {
 
     return tokens
   } catch (err) {
-    // Catches TokenExpiredError, JsonWebTokenError, and malformed tokens from `jwt.verify`.
     const error = new Error('Invalid or expired refresh token')
 
     error.code = 'REFRESH_EXPIRED'

@@ -1,6 +1,3 @@
-/* ═══════════════════════════════════════════════════
-   PAGE LAYOUT
-═══════════════════════════════════════════════════ */
 
 .navigationEdit_container {
   display: flex;
@@ -12,10 +9,6 @@
   box-sizing: border-box;
   background-color: #f7f7f9;
 }
-
-/* ═══════════════════════════════════════════════════
-   LEFT PANEL – FORM
-═══════════════════════════════════════════════════ */
 
 .navigationEdit_creating {
   width: 100%;
@@ -97,9 +90,6 @@
   filter: invert(100%);
 }
 
-/* ═══════════════════════════════════════════════════
-   RIGHT PANEL – LIST
-═══════════════════════════════════════════════════ */
 
 .navigationEdit_list {
   width: 100%;
@@ -108,7 +98,6 @@
   gap: 6px;
 }
 
-/* Static (non-draggable) rows — Home, Messenger */
 .navigationEdit_list_item {
   display: flex;
   flex-direction: row;
@@ -130,9 +119,7 @@
   flex: 1;
 }
 
-/* ═══════════════════════════════════════════════════
-   TREE CONTAINER
-═══════════════════════════════════════════════════ */
+
 
 .navigationTree_container {
   width: 100%;
@@ -144,9 +131,6 @@
   gap: 0;
 }
 
-/* ═══════════════════════════════════════════════════
-   TREE ITEM WRAPPER  (controls indentation)
-═══════════════════════════════════════════════════ */
 
 .treeItem_wrapper {
   padding-left: var(--spacing, 0px);
@@ -156,7 +140,7 @@
   padding-bottom: 3px;
 }
 
-/* ─── Ghost: translucent placeholder left in place while dragging ─── */
+
 .treeItem_wrapper.ghost > .treeItem_root {
   opacity: 0.35;
   background: #e8d5f7;
@@ -164,7 +148,7 @@
   box-shadow: none;
 }
 
-/* ─── DragOverlay clone ─── */
+
 .treeItem_wrapper.dragOverlay {
   pointer-events: none;
 }
@@ -178,9 +162,6 @@
   transform: scale(1.02);
 }
 
-/* ═══════════════════════════════════════════════════
-   TREE ITEM ROOT  (the visible card)
-═══════════════════════════════════════════════════ */
 
 .treeItem_root {
   display: flex;
@@ -202,10 +183,6 @@
   box-shadow: 0 2px 8px rgba(177, 78, 224, 0.12);
   border-color: #d4a8f0;
 }
-
-/* ═══════════════════════════════════════════════════
-   DRAG HANDLE
-═══════════════════════════════════════════════════ */
 
 .dragHandle {
   display: flex;
@@ -236,10 +213,6 @@
   color: #b14ee0;
 }
 
-/* ═══════════════════════════════════════════════════
-   ITEM LABEL
-═══════════════════════════════════════════════════ */
-
 .treeItem_label {
   font-size: 0.95rem;
   font-weight: 600;
@@ -251,9 +224,7 @@
   user-select: none;
 }
 
-/* ═══════════════════════════════════════════════════
-   DELETE BUTTON
-═══════════════════════════════════════════════════ */
+
 
 .deleteButton {
   display: flex;
@@ -280,20 +251,15 @@
   background: #fdecea;
 }
 
-/* ═══════════════════════════════════════════════════
-   DEPTH ACCENT LINE
-═══════════════════════════════════════════════════ */
 
-/* Items with depth > 0 get a left accent */
+
+
 .treeItem_wrapper[style*='--spacing: 30px'] > .treeItem_root,
 .treeItem_wrapper[style*='--spacing: 60px'] > .treeItem_root,
 .treeItem_wrapper[style*='--spacing: 90px'] > .treeItem_root {
   background: #fdf7ff;
 }
 
-/* ═══════════════════════════════════════════════════
-   LOADER & ERROR
-═══════════════════════════════════════════════════ */
 
 .loader {
   width: 44px;
@@ -325,9 +291,6 @@
   border-radius: 12px;
 }
 
-/* ═══════════════════════════════════════════════════
-   RESPONSIVE – DESKTOP
-═══════════════════════════════════════════════════ */
 
 @media (min-width: 768px) {
   .navigationEdit_container {
@@ -339,7 +302,6 @@
     background: #f7f7f9;
   }
 
-  /* Left panel — fixed sidebar feel */
   .navigationEdit_creating {
     width: 400px;
     min-width: 300px;
@@ -362,7 +324,6 @@
     margin-top: 0.25rem;
   }
 
-  /* Right panel — scrollable list */
   .navigationEdit_list {
     flex: 1;
     padding: 1.5rem 2rem;

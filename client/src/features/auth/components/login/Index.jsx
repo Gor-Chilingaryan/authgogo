@@ -7,7 +7,6 @@ import ValidationMessages from '@/components/validation-message';
 
 function Login() {
   const {
-    formData,
     isFormValid,
     handleBlur,
     handleSignIn,

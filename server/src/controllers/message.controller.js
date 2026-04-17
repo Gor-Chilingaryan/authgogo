@@ -64,7 +64,6 @@ export const markAsRead = async (req, res) => {
   res.status(result.status).json(result.json)
 }
 
-
 export const searchUsers = async (req, res) => {
   const result = await searchUsersService(req.query.q, req.user._id)
   res.status(result.status).json(result.json)

@@ -3,7 +3,6 @@ import { upload } from '../middleware/upload.js'
 import authMiddleware from '../middleware/auth.js'
 import User from '../models/userSchema.js'
 
-
 const router = express.Router()
 
 router.post('/upload-avatar', authMiddleware, upload.single('avatar'), async (req, res) => {
@@ -19,8 +18,6 @@ router.post('/upload-avatar', authMiddleware, upload.single('avatar'), async (re
       { avatar: imageUrl },
       { new: true }
     ).select('-password')
-
-
 
     res.json({
       success: true,

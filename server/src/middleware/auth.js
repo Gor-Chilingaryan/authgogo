@@ -4,7 +4,6 @@ import 'dotenv/config'
 
 const ACCESS_SECRET = process.env.ACCESS_SECRET
 
-
 const authMiddleware = async (req, res, next) => {
   try {
  

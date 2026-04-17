@@ -59,13 +59,12 @@ export const forgotPasswordController = async (req, res) => {
 
 export const newPasswordController = async (req, res) => {
   try {
-    // ВАЖНО: token берем из params (из URL), а password из body
+
     const { token } = req.params;
     const { password } = req.body;
 
     const result = await newPasswordService(token, password);
 
-    // Устанавливаем куки, чтобы пользователь сразу залогинился
     res.cookie('accessToken', result.accessToken, cookieOptions);
     res.cookie('refreshToken', result.refreshToken, cookieOptions);
 

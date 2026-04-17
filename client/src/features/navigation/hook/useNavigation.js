@@ -1,7 +1,3 @@
-/**
- * Navigation hook.
- * Fetches user navigation items (flat list from API) and exposes tree-shaped data for the bar + edit action.
- */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -47,7 +43,6 @@ export function useNavigation() {
 
   return {
     navRoots,
-    /** Raw flat list if needed elsewhere */
     flatNavItems: flatItems,
     error,
     isLoading,

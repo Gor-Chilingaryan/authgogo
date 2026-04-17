@@ -136,7 +136,6 @@ function useNavigationEdit() {
 					isLatest,
 					error: err?.message,
 				})
-				// Prevent stale rollback: older failed requests must not override newer optimistic UI.
 				if (isLatest) {
 					setItems(previousItems)
 					itemsRef.current = previousItems

@@ -85,7 +85,7 @@ export function useTree({ items, handleItemReorder }) {
     [activeId, orderedItems]
   );
 
-  // ── Drag handlers ──
+
   const onDragStart = ({ active }) => {
     setActiveId(active.id);
     setOverId(active.id);
